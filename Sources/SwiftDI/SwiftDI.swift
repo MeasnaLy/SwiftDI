@@ -2,7 +2,6 @@
 // https://docs.swift.org/swift-book
 
 import Foundation
-import SwiftUI
 
 @attached(member)
 public macro ApplicationDI(_ packageName: String) = #externalMacro(module: "SwiftDIMacros", type: "ApplicationDIMacros")

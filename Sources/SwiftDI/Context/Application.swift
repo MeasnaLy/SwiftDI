@@ -22,4 +22,9 @@ public class Application {
     public func getContext() -> AppContext? {
         return appContext
     }
+    
+    public func printTest() -> String {
+        let listStr = appContext!.map.map { "\($0.key) - \($0.value)" }
+        return String(describing: listStr)
+    }    
 }

@@ -1,26 +1,10 @@
 import SwiftDI
-import SwiftDIMacros
-//import Foundation
+import Foundation
 
 
 @ApplicationDI("SwiftDIClient")
 class AppDelegate  {
  
-}
-
-class Test {
-    var t: Test? { self.getInstance(Test.self) }
-    init() {
-        
-    }
-    
-    required init(_ instances: InitializerDI...) {
-        
-    }
-}
-
-extension Test : InitializerDI {
-    
 }
 
 //@ComponentDI(name: "userService")
@@ -61,15 +45,8 @@ class TestService  {
     init() {
         
     }
-    
-//    required init(_ instances: InitializerDI...) {
-//        
-//    }
 }
 
-//extension TestService : InitializerDI {
-//  
-//}
 
 let app = TestService()
 print(app.userService ?? "nil")

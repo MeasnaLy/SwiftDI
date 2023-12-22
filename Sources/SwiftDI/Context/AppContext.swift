@@ -19,7 +19,4 @@ public class AppContext {
     func addInstance(name: String, instance: InitializerDI) {
         self.map[name] = instance
     }
-    
-    
-    
 }

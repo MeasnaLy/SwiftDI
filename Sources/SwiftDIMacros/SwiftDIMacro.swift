@@ -5,7 +5,8 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 import Foundation
 
-private var diContext: AppContext?
+//private var diContext: AppContext?
+
 
 public struct ApplicationDIMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
@@ -28,7 +29,7 @@ public struct ApplicationDIMacros: MemberMacro {
         let packageName = String(describing: argument)
         print("packageName: \(packageName)")
         
-        diContext = Application.shared.startNewContext(package: packageName)
+//        diContext = Application.shared.startNewContext(package: packageName)
         
         return []
     }
@@ -48,20 +49,20 @@ public struct ComponentDIMacros: MemberMacro {
             return []
         }
 
-        let className = "\(diContext?.packageName ?? "").\(declaration.name!)"
-        print("className: \(className)")
-        if let classType = NSClassFromString(className) as? InitializerDI.Type {
-            var classInstance = classType.init()
-            if let argumentItem = node.firstArgument {
-                if argumentItem.value == "" {
-                    // error
-                }
-                diContext?.addInstance(name: argumentItem.value, instance: classInstance)
-            }
-
-        } else {
-            print("class not found!")
-        }
+//        let className = "\(diContext?.packageName ?? "").\(declaration.name!)"
+//        print("className: \(className)")
+//        if let classType = NSClassFromString(className) as? InitializerDI.Type {
+//            var classInstance = classType.init()
+//            if let argumentItem = node.firstArgument {
+//                if argumentItem.value == "" {
+//                    // error
+//                }
+//                diContext?.addInstance(name: argumentItem.value, instance: classInstance)
+//            }
+//
+//        } else {
+//            print("class not found!")
+//        }
             
    
 
