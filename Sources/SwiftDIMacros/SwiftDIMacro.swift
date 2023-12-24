@@ -6,7 +6,9 @@ import SwiftDiagnostics
 import Foundation
 
 //private var diContext: AppContext?
-
+extension Notification.Name {
+    static let sharedNotification = Notification.Name("com.example.sharedNotification")
+}
 
 public struct ApplicationDIMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
@@ -48,8 +50,11 @@ public struct ComponentDIMacros: MemberMacro {
             )
             return []
         }
-
-//        let className = "\(diContext?.packageName ?? "").\(declaration.name!)"
+        
+        let className = declaration.name!
+        func postNotification() {
+              NotificationCenter.default.post(name: .sharedNotification, object: nil, userInfo: ["key": className])
+          }
 //        print("className: \(className)")
 //        if let classType = NSClassFromString(className) as? InitializerDI.Type {
 //            var classInstance = classType.init()
@@ -64,12 +69,15 @@ public struct ComponentDIMacros: MemberMacro {
 //            print("class not found!")
 //        }
             
+        
+        let initialCode: String = "convenience init()"
+        let partialSynTax =  SyntaxNodeString(stringLiteral: initialCode)
    
-
+        let initializer = try InitializerDeclSyntax(partialSynTax) {
+         
+        }
         
-       
-        
-        return []
+        return []//[DeclSyntax(initializer)]
     }
 }
 
@@ -87,8 +95,8 @@ extension ComponentDIMacros: ExtensionMacro {
         
         let syntax: DeclSyntax = """
         extension \(raw: declaration.name!): InitializerDI {
-            required init(_ instances: InitializerDI...) {
-                
+            static func createInstace() -> InitializerDI{
+                 return self.init()
             }
         }
         """
@@ -108,6 +116,7 @@ public struct InjectClassMaros: PeerMacro {
             )
             return []
         }
+        
         let key = varDecl.bindingSpecifier.text
         let pattern = varDecl.bindings.first?.pattern.description ?? ""
         let typeName = varDecl.bindings.first?.typeAnnotation?.type.description ?? ""

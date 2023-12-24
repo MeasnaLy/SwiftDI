@@ -19,4 +19,21 @@ public class AppContext {
     func addInstance(name: String, instance: InitializerDI) {
         self.map[name] = instance
     }
+    
+    func createClass(_ classess: [String]) {
+        
+        for className in classess {
+            if let classType = NSClassFromString(className) as? InitializerDI.Type {
+                let classInstance = classType.createInstace()
+                map[className] = classInstance
+    
+            } else {
+                print("class not found!")
+            }
+        }
+    }
+    
+    func printMap() {
+        print("map: \(self.map)")
+    }
 }

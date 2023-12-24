@@ -69,21 +69,19 @@ final class SwiftDITests: XCTestCase {
                 """
                 @ComponentDI(name: "service")
                 class Service {
-                    var test: Service = #InjectClass()
-                    init() {
-                        self.username = "lazi"
-                    }
-                    
-                    init(username: String) {
-                        self.username = username
-                    }
                 }
                 """,
                 expandedSource:"""
+                
                 class Service {
+                }
+                
+                extension Service: InitializerDI {
                 }
                 """,
                 macros: testMacros)
+            
+            
         }
     
     func testInjectClass() {

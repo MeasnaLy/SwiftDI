@@ -1,36 +1,21 @@
 import SwiftDI
 import Foundation
 
+Application.shared.startNewContext(package: "")
 
 @ApplicationDI("SwiftDIClient")
 class AppDelegate  {
  
 }
 
-//@ComponentDI(name: "userService")
+@ComponentDI(name: "userService")
 class UserService {
-    var username: String
-    
-    init() {
-        self.username = "lazi"
-    }
-    
-    init(username: String) {
-        self.username = username
-    }
+    required init(){}
 }
 
 @ComponentDI(name: "cardService")
 class CardService {
-    var name: String
-    
-    init() {
-        self.name = "7 Hero"
-    }
-    
-    init(name: String) {
-        self.name = name
-    }
+    required init(){}
 }
 
 @ComponentDI(name: "testService")
@@ -42,15 +27,18 @@ class TestService  {
 //    @InjectClass
     var cardService: CardService?
     
-    init() {
-        
-    }
+    required init(){}
+    
 }
 
+let app = CardService()
 
-let app = TestService()
-print(app.userService ?? "nil")
-print(app.cardService ?? "nil")
+
+//Application.shared.addClass("SwiftDIClient.TestService")
+//Application.shared.addClass("SwiftDIClient.UserService")
+//Application.shared.addClass("SwiftDIClient.CardService")
+//Application.shared.createClass()
+//Application.shared.printTest()
 
 print("finished")
 print("finished12")
