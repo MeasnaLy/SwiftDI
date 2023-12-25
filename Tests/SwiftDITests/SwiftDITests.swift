@@ -150,4 +150,40 @@ final class SwiftDITests: XCTestCase {
             """,
             macros: testMacros)
     }
+    
+    func testMacroComponentDIWithCustomVariable() {
+        assertMacroExpansion(
+            """
+            class Test {
+            
+            }
+            @ComponentDI()
+            class Service {
+                let test: Test
+                private var name: String
+            }
+            """,
+            expandedSource:"""
+            
+            class Service {
+                let test: Test
+                private var name: String
+            
+                required init(test: Test, name: String) {
+                    self.test = test
+                    self.name = name
+                }
+            }
+            
+            extension Service: InitializerDI {
+                static func createInstace() -> InitializerDI {
+                    let test: Test = Application.shared.context.get(..)
+                    let name: String = ""
+
+                    return self.init(test: test, name: name)
+                }
+            }
+            """,
+            macros: testMacros)
+    }
 }

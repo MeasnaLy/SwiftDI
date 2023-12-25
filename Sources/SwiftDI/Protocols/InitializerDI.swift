@@ -9,30 +9,20 @@ import Foundation
 
 public protocol InitializerDI {
 //    init?(_ instances: InitializerDI...)
-//    func getInstance<T>(_ type: T.Type) -> T?
     static func createInstace() -> InitializerDI
 //    init()
+    func getInstance<T : InitializerDI>(_ type: T.Type) -> T?
 }
 
 public extension InitializerDI {
-//    func getInstance<T>(_ type: T.Type) -> T? {
-//        if let context = Application.shared.getContext() {
-//            for (_, instance) in context.map {
-//                if let instance = instance as? T {
-//                    return instance
-//                }
-//            }
-//        }
-//        
-//        return nil
-//    }
-    
-//    func printHi() {
-//        print("hi from InitializerDI")
-//    }
-    
-//    init(defaultValues: Bool) {
-//          // Define your default values or initialization logic here
-//          self.init()
-//      }
+    func getInstance<T : InitializerDI>(_ type: T.Type) -> T? {
+        let key = NSStringFromClass(type as! AnyClass)
+        if let context = Application.shared.getContext() {
+            if let instance = context.getInstance(key: key) {
+                return instance as? T
+            }
+        }
+        
+        return nil
+    }
 }

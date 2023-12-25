@@ -15,31 +15,15 @@ extension Notification.Name {
 public class Application {
     public static let shared = Application()
     private var appContext: AppContext?
-    private var classes: [String] = []
     
     private init() {}
     
-    public func startNewContext(package: String) {
-        appContext = AppContext(packageName: package)
+    public func startNewContext<T : InitializerDI>(classes: [T.Type]) -> AppContext {
+        appContext = AppContext(classes: classes)
+        return appContext!
     }
     
-    public func printTest() {
-        self.appContext!.printMap()
-    }
-    
-    public func addClass(_ name: String) {
-        self.classes.append(name)
-    }
-    
-    public func setClasses(_ names: [String]) {
-        self.classes.append(contentsOf: names)
-    }
-    
-    public func createClass() {
-        self.appContext!.createClass(self.classes)
-    }
-    
-    public func getInstance(name: String) -> Any? {
-        return self.appContext!.getInstance(name: name)
+    public func getContext() -> AppContext? {
+        return self.appContext
     }
 }

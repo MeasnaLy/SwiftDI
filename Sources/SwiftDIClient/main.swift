@@ -42,12 +42,12 @@ class Sample {
     }
 }
 
-Application.shared.startNewContext(package: "SwiftDIClient")
-Application.shared.setClasses(["Sample"])
-Application.shared.createClass()
+let classes = [Sample.self]
+let context = Application.shared.startNewContext(classes: classes)
+//Application.shared.createClass()
 Application.shared.printTest()
 
-if let instance = Application.shared.getInstance(name: "SwiftDIClient.Sample")  {
+if let instance = context.getInstance(key: "Sample")  {
     let sample: Sample = instance as! Sample
     print("sample: \(sample.descrip())")
 }

@@ -9,36 +9,43 @@ import Foundation
 
 public class AppContext {
     
-    var map: [String: Any] = [:]
-    var packageName: String = ""
+    private var mapKeyInstance: [String: Any] = [:]
+    private var classes: [InitializerDI.Type] = []
     
-    init(packageName: String) {
-        self.packageName = "SwiftDIClient"//packageName.replacingOccurrences(of: "\"", with: "")
+    init(classes: [InitializerDI.Type]) {
+        self.classes = classes
+        self.createClass()
     }
     
     func addInstance(name: String, instance: InitializerDI) {
-        self.map[name] = instance
+        self.mapKeyInstance[name] = instance
     }
     
-    func createClass(_ classess: [String]) {
+    func createClass() {
         
-        for name in classess {
-            let className = "\(self.packageName).\(name)"
-            if let classType = NSClassFromString(className) as? InitializerDI.Type {
-                let classInstance = classType.createInstace()
-                map[className] = classInstance
-    
-            } else {
-                print("class not found: \(className)")
-            }
+        for item in self.classes {
+            let className = String(describing: item)
+            let classInstance = item.createInstace()
+            mapKeyInstance[className] = classInstance
+
+            
+//            let className = String(describing: item)
+//            
+//            if let classType = NSClassFromString(className) as? InitializerDI.Type {
+//                let classInstance = classType.createInstace()
+//                mapKeyInstance[className] = classInstance
+//    
+//            } else {
+//                print("class not found: \(className)")
+//            }
         }
     }
     
-    func getInstance(name: String) -> Any? {
-        return self.map[name]
+    public func getInstance(key: String) -> Any? {
+        return self.mapKeyInstance[key]
     }
     
     func printMap() {
-        print("map: \(self.map)")
+        print("map: \(self.mapKeyInstance)")
     }
 }
