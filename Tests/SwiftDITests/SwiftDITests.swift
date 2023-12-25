@@ -159,6 +159,9 @@ final class SwiftDITests: XCTestCase {
             }
             @ComponentDI()
             class Service {
+                var testReadOnly: Bool {
+                    return true
+                }
                 let test: Test
                 private var name: String
             }

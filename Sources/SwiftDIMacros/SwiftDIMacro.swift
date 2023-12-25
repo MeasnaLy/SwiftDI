@@ -100,10 +100,10 @@ extension ComponentDIMacros: ExtensionMacro {
         for diVariable in variables {
             if diVariable.isNeedInitiazer {
                 let name = diVariable.name.trimmed
-                let type = diVariable.type?.description.trim ?? ""
+                let type = diVariable.typeToString
                 var memberStr = "let \(name): \(type)"
                 
-                let isOptional = type.contains("?")
+                let isOptional = diVariable.isOptional
                 
                 if let value = diVariable.value {
                     memberStr += " \(value)"

@@ -39,8 +39,9 @@ extension DeclGroupSyntax {
             let name = item!.pattern
             let type = item?.typeAnnotation?.type
             let value = item?.initializer
+            let accessorBlock = item?.accessorBlock
             
-            let diVariable  = DIVariable(modifiers: modifiers, specifier: specifier, name: name, type: type, value: value)
+            let diVariable  = DIVariable(modifiers: modifiers, specifier: specifier, name: name, type: type, value: value, accessorBlock: accessorBlock)
             
             return diVariable
         }

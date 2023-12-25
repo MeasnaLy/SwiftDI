@@ -36,9 +36,17 @@ class Sample {
     private var name: String
     var gender: String = "male"
     var node: String?
+
     
     func descrip()-> String  {
         return "age: \(age), id: \(id), name: \(name), gender: \(gender), node: \(node ?? "nil")"
+    }
+    
+    func getSelf() -> Sample? {
+        if let instance = context.getInstance(key: "Sample") {
+            return instance as? Sample
+        }
+        return nil
     }
 }
 
@@ -48,6 +56,7 @@ let context = Application.shared.startNewContext(classes: classes)
 if let instance = context.getInstance(key: "Sample")  {
     let sample: Sample = instance as! Sample
     print("sample: \(sample.descrip())")
+    print("sample1: \(sample.getSelf()?.descrip())")
 }
 
 // TODO: ignore:
