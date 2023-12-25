@@ -1,34 +1,6 @@
 import SwiftDI
 import Foundation
 
-//@ApplicationDI("SwiftDIClient")
-//class AppDelegate  {
-// 
-//}
-//
-//@ComponentDI()
-//class UserService {
-//}
-//
-//@ComponentDI()
-//class CardService {
-//}
-//
-//@ComponentDI()
-//class TestService  {
-//    
-////    @InjectClass
-//    var userService: UserService?
-//    
-////    @InjectClass
-//    var cardService: CardService?
-//}
-//
-//
-//let app = CardService()
-//
-//
-
 @Component
 class Sample {
     private var age: Int = 0
