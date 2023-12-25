@@ -7,8 +7,8 @@ import XCTest
 import SwiftDIMacros
 
 let testMacros: [String: Macro.Type] = [
-    "ApplicationDI" : ApplicationDIMacros.self,
-    "ComponentDI" : ComponentDIMacros.self,
+//    "ApplicationDI" : ApplicationDIMacros.self,
+    "Component" : ComponentMacros.self,
     "InjectClass": InjectClassMaros.self
     
 ]
@@ -16,76 +16,25 @@ let testMacros: [String: Macro.Type] = [
 
 final class SwiftDITests: XCTestCase {
     
-//    func testMacro() throws {
-//        #if canImport(SwiftDIMacros)
+//    func testMacroApplicationDI() {
 //        assertMacroExpansion(
 //            """
-//            #stringify(a + b)
+//            @ApplicationDI("SwiftDITests.SwiftDITests")
+//            class Application {
+//            }
 //            """,
-//            expandedSource: """
-//            (a + b, "a + b")
+//            expandedSource:"""
+//            
+//            class Application {
+//            }
 //            """,
-//            macros: testMacros
-//        )
-//        #else
-//        throw XCTSkip("macros are only supported when running tests for the host platform")
-//        #endif
-//    }
-//
-//    func testMacroWithStringLiteral() throws {
-//        #if canImport(SwiftDIMacros)
-//        assertMacroExpansion(
-//            #"""
-//            #stringify("Hello, \(name)")
-//            """#,
-//            expandedSource: #"""
-//            ("Hello, \(name)", #""Hello, \(name)""#)
-//            """#,
-//            macros: testMacros
-//        )
-//        #else
-//        throw XCTSkip("macros are only supported when running tests for the host platform")
-//        #endif
+//            macros: testMacros)
 //    }
     
-    func testMacroApplicationDI() {
+    func testMacroComponent() {
         assertMacroExpansion(
             """
-            @ApplicationDI("SwiftDITests.SwiftDITests")
-            class Application {
-            }
-            """,
-            expandedSource:"""
-            
-            class Application {
-            }
-            """,
-            macros: testMacros)
-    }
-    
-    func testInjectClass() {
-        assertMacroExpansion(
-            """
-            class Application {
-                @InjectClass
-                var test: TestService?
-            }
-            """,
-            expandedSource:"""
-            
-            class Application {
-                var test: TestService = {
-            
-                }
-            }
-            """,
-            macros: testMacros)
-    }
-    
-    func testMacroComponentDI() {
-        assertMacroExpansion(
-            """
-            @ComponentDI()
+            @Component
             class Service {
             }
             """,
@@ -109,7 +58,7 @@ final class SwiftDITests: XCTestCase {
     func testMacroComponentDIWithVariable() {
         assertMacroExpansion(
             """
-            @ComponentDI()
+            @Component
             class Service {
                 private static var age: Int = 0
                 private let age: Int = 0
@@ -151,7 +100,7 @@ final class SwiftDITests: XCTestCase {
             macros: testMacros)
     }
     
-    func testMacroComponentDIWithCustomVariable() {
+    func testInjectClass() {
         assertMacroExpansion(
             """
             class Service {
@@ -165,10 +114,10 @@ final class SwiftDITests: XCTestCase {
             class Service {
                 var test: Test? {
                     get {
-                        if let instance = context.getInstance(key: "Test") {
-                            instance as! Test
+                        if let instance: Test = context.getInstance(key: "Test") {
+                            return instance
                         }
-                        nil
+                        return nil
                     }
                 }
                 private var name: String

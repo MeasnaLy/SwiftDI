@@ -8,10 +8,6 @@
 import Foundation
 import SwiftDIMacros
 
-extension Notification.Name {
-    static let sharedNotification = Notification.Name("com.example.sharedNotification")
-}
-
 public class Application {
     public static let shared = Application()
     private var appContext: AppContext?

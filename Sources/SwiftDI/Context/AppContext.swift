@@ -26,18 +26,8 @@ public class AppContext {
         for item in self.classes {
             let className = String(describing: item)
             let classInstance = item.createInstace()
-            mapKeyInstance[className] = classInstance
-
             
-//            let className = String(describing: item)
-//            
-//            if let classType = NSClassFromString(className) as? InitializerDI.Type {
-//                let classInstance = classType.createInstace()
-//                mapKeyInstance[className] = classInstance
-//    
-//            } else {
-//                print("class not found: \(className)")
-//            }
+            mapKeyInstance[className] = classInstance
         }
     }
     

@@ -8,9 +8,7 @@
 import Foundation
 
 public protocol InitializerDI {
-//    init?(_ instances: InitializerDI...)
     static func createInstace() -> InitializerDI
-//    init()
     func getInstance<T : InitializerDI>(_ type: T.Type) -> T?
 }
 

@@ -3,12 +3,12 @@
 
 import Foundation
 
-@attached(member)
-public macro ApplicationDI(_ packageName: String) = #externalMacro(module: "SwiftDIMacros", type: "ApplicationDIMacros")
+//@attached(member)
+//public macro ApplicationDI(_ packageName: String) = #externalMacro(module: "SwiftDIMacros", type: "ApplicationDIMacros")
 
 @attached(extension, conformances: InitializerDI, names: arbitrary)
 @attached(member, names: named(init))
-public macro ComponentDI() = #externalMacro(module: "SwiftDIMacros", type: "ComponentDIMacros")
+public macro Component() = #externalMacro(module: "SwiftDIMacros", type: "ComponentMacros")
 
 //@attached(peer)
 //public macro InjectClass() = #externalMacro(module: "SwiftDIMacros", type: "InjectClassMaros")

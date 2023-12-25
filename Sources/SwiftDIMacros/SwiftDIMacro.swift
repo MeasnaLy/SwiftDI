@@ -5,35 +5,30 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 import Foundation
 
-//private var diContext: AppContext?
-extension Notification.Name {
-    static let sharedNotification = Notification.Name("com.example.sharedNotification")
-}
+//public struct ApplicationDIMacros: MemberMacro {
+//    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
+//                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
+//                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+//        
+//        guard declaration.isClass else {
+//            context.diagnose(
+//                Diagnostic(
+//                    node: Syntax(node),
+//                    message: SwiftDIDiagnostic.mustBeClass)
+//            )
+//            return []
+//        }
+//       
+//        guard let argument = node.arguments else {
+//            fatalError("compiler bug: the macro does not have any arguments")
+//        }
+//        
+//        
+//        return []
+//    }
+//}
 
-public struct ApplicationDIMacros: MemberMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
-                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
-                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        
-        guard declaration.isClass else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeClass)
-            )
-            return []
-        }
-       
-        guard let argument = node.arguments else {
-            fatalError("compiler bug: the macro does not have any arguments")
-        }
-        
-        
-        return []
-    }
-}
-
-public struct ComponentDIMacros: MemberMacro {
+public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
                                  in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
@@ -71,7 +66,7 @@ public struct ComponentDIMacros: MemberMacro {
     }
 }
 
-extension ComponentDIMacros: ExtensionMacro {
+extension ComponentMacros: ExtensionMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
         
         guard let classDecl = declaration.toClassDecl else {
