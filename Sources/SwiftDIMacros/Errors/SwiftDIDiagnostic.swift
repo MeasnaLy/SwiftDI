@@ -11,6 +11,7 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
     case mustBeClass
     case mustHaveType
     case mustBeOptional
+    case invalidVariableInjectClass
     
     var severity: DiagnosticSeverity {
         return .error
@@ -24,6 +25,8 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
             return "All variables in @ComponentDI must have `Type`"
         case .mustBeOptional:
             return "All variables in @ComponentDI must be `Optional`"
+        case .invalidVariableInjectClass:
+            return "InjectClass variables invalid format"
         }
     }
     var  diagnosticID: MessageID {

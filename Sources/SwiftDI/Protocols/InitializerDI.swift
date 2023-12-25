@@ -18,8 +18,8 @@ public extension InitializerDI {
     func getInstance<T : InitializerDI>(_ type: T.Type) -> T? {
         let key = NSStringFromClass(type as! AnyClass)
         if let context = Application.shared.getContext() {
-            if let instance = context.getInstance(key: key) {
-                return instance as? T
+            if let instance:T = context.getInstance(key: key) {
+                return instance
             }
         }
         

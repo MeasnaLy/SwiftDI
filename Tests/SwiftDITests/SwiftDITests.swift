@@ -154,38 +154,26 @@ final class SwiftDITests: XCTestCase {
     func testMacroComponentDIWithCustomVariable() {
         assertMacroExpansion(
             """
-            class Test {
-            
-            }
-            @ComponentDI()
             class Service {
-                var testReadOnly: Bool {
-                    return true
-                }
-                let test: Test
+                @InjectClass
+                var test: Test?
                 private var name: String
             }
             """,
             expandedSource:"""
             
             class Service {
-                let test: Test
+                var test: Test? {
+                    get {
+                        if let instance = context.getInstance(key: "Test") {
+                            instance as! Test
+                        }
+                        nil
+                    }
+                }
                 private var name: String
-            
-                required init(test: Test, name: String) {
-                    self.test = test
-                    self.name = name
-                }
             }
             
-            extension Service: InitializerDI {
-                static func createInstace() -> InitializerDI {
-                    let test: Test = Application.shared.context.get(..)
-                    let name: String = ""
-
-                    return self.init(test: test, name: name)
-                }
-            }
             """,
             macros: testMacros)
     }

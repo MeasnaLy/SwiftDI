@@ -41,8 +41,11 @@ public class AppContext {
         }
     }
     
-    public func getInstance(key: String) -> Any? {
-        return self.mapKeyInstance[key]
+    public func getInstance<T: InitializerDI>(key: String) -> T? {
+        if let instance = self.mapKeyInstance[key] {
+            return instance as? T
+        }
+        return nil
     }
     
     func printMap() {

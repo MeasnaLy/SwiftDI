@@ -23,6 +23,10 @@ extension AttributeSyntax {
         
         return nil
     }
+    
+    var name: String {
+        String(self.description.trim.dropFirst())
+    }
 }
 
 

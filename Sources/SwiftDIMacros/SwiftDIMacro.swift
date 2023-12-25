@@ -131,10 +131,10 @@ extension ComponentDIMacros: ExtensionMacro {
     }
 }
 
-public struct InjectClassMaros: PeerMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+public struct InjectClassMaros: AccessorMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         
-        guard var varDecl = declaration.as(VariableDeclSyntax.self) else {
+        guard let varDecl  = declaration.as(VariableDeclSyntax.self) else {
             context.diagnose(
                 Diagnostic(
                     node: Syntax(node),
@@ -143,11 +143,31 @@ public struct InjectClassMaros: PeerMacro {
             return []
         }
         
-        let key = varDecl.bindingSpecifier.text
-        let pattern = varDecl.bindings.first?.pattern.description ?? ""
-        let typeName = varDecl.bindings.first?.typeAnnotation?.type.description ?? ""
-        let typeNamee = typeName.filter { $0 != "?" }
-        print("typeName: \(typeName)")
-        return ["\(raw: key) \(raw: pattern): \(raw: typeName) { \(raw: typeNamee).getInstance(\(raw: typeNamee).self) }"]
+        if !varDecl.diVariable.isValidInjectClass {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.invalidVariableInjectClass)
+            )
+            return []
+        }
+        
+        let type = varDecl.diVariable.typeToStringWithoutOptional
+        
+        
+        return [
+        """
+        get {
+            if let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") {
+                return instance
+            }
+            return nil
+        }
+        """
+        ]
     }
+    
+    
 }
+
+

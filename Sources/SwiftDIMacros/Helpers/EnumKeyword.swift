@@ -15,18 +15,60 @@ enum Keyword : String {
 
 enum KeywordType : String {
     case `Int` = "Int"
-    case `String` = "String"
-    case `Double` = "Double"
+    case `UInt` = "UInt"
     case `Float` = "Float"
+    case `Double` = "Double"
+    case `Bool` = "Bool"
+    case `Array` = "Array"
+    case `Dictionary` = "Dictionary"
+    case `Set` = "Set"
+    case `Character` = "Character"
+    case `String` = "String"
+    case Custom = "Custom"
     
-    var defaultValue: Any {
+    init?(rawValue: String) {
+        switch rawValue {
+        case "Int" :
+            self = .Int
+        case "UInt" :
+            self = .UInt
+        case "Float" :
+            self = .Float
+        case "Double" :
+            self = .Double
+        case "Bool" :
+            self = .Bool
+        case "Array" :
+            self = .Array
+        case "Dictionary" :
+            self = .Dictionary
+        case "Set" :
+            self = .Set
+        case "Character" :
+            self = .Character
+        case "String" :
+            self = .String
+        default:
+            self = .Custom
+        }
+    }
+    
+    var defaultValue: Any? {
         switch self {
-        case .Int:
+        case .Int, .UInt:
             return 0
         case .Double, .Float:
             return 0.0
-        default:
+        case .Bool:
+            return false
+        case .Array, .Set:
+            return []
+        case .Dictionary:
+            return [:]
+        case .String, .Character:
             return "\"\""
+        default:
+            return nil
         }
     }
 }

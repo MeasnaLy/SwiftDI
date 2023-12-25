@@ -18,7 +18,7 @@ public class Application {
     
     private init() {}
     
-    public func startNewContext<T : InitializerDI>(classes: [T.Type]) -> AppContext {
+    public func startNewContext(classes: [InitializerDI.Type]) -> AppContext {
         appContext = AppContext(classes: classes)
         return appContext!
     }

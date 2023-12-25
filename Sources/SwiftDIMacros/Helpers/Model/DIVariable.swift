@@ -9,6 +9,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 
 struct DIVariable {
+    let attributes: [String]
     let modifiers: [String]
     let specifier: String
     let name: PatternSyntax
@@ -34,6 +35,12 @@ struct DIVariable {
             return false
         }
         
+        let isInjectClassAttribute = attributes.first { $0 == "InjectClass"} != nil
+        
+        if isVar && isInjectClassAttribute {
+            return false
+        }
+        
         return true
     }
     
@@ -47,4 +54,38 @@ struct DIVariable {
     var typeToString: String {
         type?.description.trim ?? ""
     }
+    
+    var typeToStringWithoutOptional: String {
+        typeToString.filter { $0 != "?" }
+    }
+    
+    var isValidInjectClass : Bool {
+        let isValidAttribute = attributes.first { $0 == "InjectClass"} != nil
+        let isValidModifier = modifiers.first { $0 == Keyword.static.rawValue } == nil
+        let isValidSpacifier = specifier == Keyword.var.rawValue
+        let isValidType = KeywordType(rawValue: typeToString) == KeywordType.Custom
+        
+        
+        return isValidAttribute && isValidModifier && isValidSpacifier && isValidType && isOptional
+    }
+    
+    var statement: String {
+        let modifier = modifiers.joined(separator: " ")
+        let value = value != nil ? value?.description : ""
+        let accessorBlock = accessorBlock != nil ? accessorBlock?.description : ""
+        
+        var statement = "\(modifier) \(specifier) \(name.description): \(typeToString)"
+        
+        if let value = value {
+            statement += value
+        }
+        
+        if let accessorBlock = accessorBlock {
+            statement += accessorBlock
+        }
+        
+        return statement
+    }
+    
+    
 }
