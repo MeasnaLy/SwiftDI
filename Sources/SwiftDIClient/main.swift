@@ -44,8 +44,6 @@ class Sample {
 
 let classes = [Sample.self]
 let context = Application.shared.startNewContext(classes: classes)
-//Application.shared.createClass()
-Application.shared.printTest()
 
 if let instance = context.getInstance(key: "Sample")  {
     let sample: Sample = instance as! Sample
