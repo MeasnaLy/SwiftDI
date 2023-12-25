@@ -11,4 +11,8 @@ extension String {
     var removeQuotes: String {
         filter { $0 != "\"" }
     }
+    
+    var trim: String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }

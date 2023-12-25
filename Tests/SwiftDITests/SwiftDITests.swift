@@ -63,27 +63,6 @@ final class SwiftDITests: XCTestCase {
             macros: testMacros)
     }
     
-        func testMacroComponentDI() {
-            testMacroApplicationDI()
-            assertMacroExpansion(
-                """
-                @ComponentDI(name: "service")
-                class Service {
-                }
-                """,
-                expandedSource:"""
-                
-                class Service {
-                }
-                
-                extension Service: InitializerDI {
-                }
-                """,
-                macros: testMacros)
-            
-            
-        }
-    
     func testInjectClass() {
         assertMacroExpansion(
             """
@@ -97,6 +76,75 @@ final class SwiftDITests: XCTestCase {
             class Application {
                 var test: TestService = {
             
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+    
+    func testMacroComponentDI() {
+        assertMacroExpansion(
+            """
+            @ComponentDI()
+            class Service {
+            }
+            """,
+            expandedSource:"""
+            
+            class Service {
+            
+                required init() {
+                }
+            }
+            
+            extension Service: InitializerDI {
+                static func createInstace() -> InitializerDI {
+                     return self.init()
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+    
+    func testMacroComponentDIWithVariable() {
+        assertMacroExpansion(
+            """
+            @ComponentDI()
+            class Service {
+                private let age: Int = 0
+                let id: Int
+                private var name: String
+                var gender: String = "male"
+                var node: String?
+            }
+            """,
+            expandedSource:"""
+            
+            class Service {
+                private let age: Int = 0
+                let id: Int
+                private var name: String
+                var gender: String = "male"
+                var node: String?
+            
+                required init(age: Int, id: Int, name: String, gender: String, node: String?) {
+                    self.age = age
+                    self.id = id
+                    self.name = name
+                    self.gender = gender
+                    self.node = node
+                }
+            }
+            
+            extension Service: InitializerDI {
+                static func createInstace() -> InitializerDI {
+                    let age: Int = 0
+                    let id: Int = 0
+                    let name: String = ""
+                    let gender: String = "male"
+                    let node: String? = nil
+            
+                    return self.init(age: age, id: id, name: name, gender: gender, node: node)
                 }
             }
             """,

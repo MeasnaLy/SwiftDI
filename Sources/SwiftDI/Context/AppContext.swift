@@ -22,15 +22,20 @@ public class AppContext {
     
     func createClass(_ classess: [String]) {
         
-        for className in classess {
+        for name in classess {
+            let className = "\(self.packageName).\(name)"
             if let classType = NSClassFromString(className) as? InitializerDI.Type {
                 let classInstance = classType.createInstace()
                 map[className] = classInstance
     
             } else {
-                print("class not found!")
+                print("class not found: \(className)")
             }
         }
+    }
+    
+    func getInstance(name: String) -> Any? {
+        return self.map[name]
     }
     
     func printMap() {

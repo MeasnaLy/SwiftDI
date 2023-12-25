@@ -8,16 +8,33 @@
 import SwiftSyntax
 
 extension DeclGroupSyntax {
+    
+    var toClassDecl: ClassDeclSyntax? {
+        self.as(ClassDeclSyntax.self)
+    }
+    
     var isStruct: Bool {
         self.as(StructDeclSyntax.self) != nil
     }
     
     var isClass: Bool {
-        self.as(ClassDeclSyntax.self) != nil
+        self.toClassDecl != nil
     }
     
     var name: String? {
         asProtocol(NamedDeclSyntax.self)?.name.text
+    }
+    
+    var diVariables: [DIVariable] {
+        guard let classDecl = self.toClassDecl else {
+            return []
+        }
+        
+        let variableDecls = classDecl.memberBlock.members.compactMap { $0.decl.as(VariableDeclSyntax.self) }
+        return variableDecls.compactMap {
+            let item = $0.bindings.first
+            return DIVariable(name:  item?.pattern, type: item?.typeAnnotation?.type, value: item?.initializer)
+        }
     }
     
     

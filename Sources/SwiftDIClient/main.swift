@@ -1,44 +1,62 @@
 import SwiftDI
 import Foundation
 
-Application.shared.startNewContext(package: "")
+//@ApplicationDI("SwiftDIClient")
+//class AppDelegate  {
+// 
+//}
+//
+//@ComponentDI()
+//class UserService {
+//}
+//
+//@ComponentDI()
+//class CardService {
+//}
+//
+//@ComponentDI()
+//class TestService  {
+//    
+////    @InjectClass
+//    var userService: UserService?
+//    
+////    @InjectClass
+//    var cardService: CardService?
+//}
+//
+//
+//let app = CardService()
+//
+//
 
-@ApplicationDI("SwiftDIClient")
-class AppDelegate  {
- 
+@ComponentDI()
+class Sample {
+    private var age: Int = 0
+    let id: Int
+    private var name: String
+    var gender: String = "male"
+    var node: String?
+    
+    func descrip()-> String  {
+        return "age: \(age), id: \(id), name: \(name), gender: \(gender), node: \(node ?? "nil")"
+    }
 }
 
-@ComponentDI(name: "userService")
-class UserService {
-    required init(){}
+Application.shared.startNewContext(package: "SwiftDIClient")
+Application.shared.setClasses(["Sample"])
+Application.shared.createClass()
+Application.shared.printTest()
+
+if let instance = Application.shared.getInstance(name: "SwiftDIClient.Sample")  {
+    let sample: Sample = instance as! Sample
+    print("sample: \(sample.descrip())")
 }
 
-@ComponentDI(name: "cardService")
-class CardService {
-    required init(){}
-}
-
-@ComponentDI(name: "testService")
-class TestService  {
-    
-//    @InjectClass
-    var userService: UserService?
-    
-//    @InjectClass
-    var cardService: CardService?
-    
-    required init(){}
-    
-}
-
-let app = CardService()
+// TODO: ignore:
+// let a = 0
+// some variable condition
 
 
-//Application.shared.addClass("SwiftDIClient.TestService")
-//Application.shared.addClass("SwiftDIClient.UserService")
-//Application.shared.addClass("SwiftDIClient.CardService")
-//Application.shared.createClass()
-//Application.shared.printTest()
 
 print("finished")
 print("finished12")

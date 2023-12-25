@@ -19,21 +19,8 @@ public class Application {
     
     private init() {}
     
-    public func startNewContext(package: String) -> AppContext {
+    public func startNewContext(package: String) {
         appContext = AppContext(packageName: package)
-        print("start new Context")
-
-        if let sharedData = UserDefaults.standard.string(forKey: "sharedKey") {
-            print("Shared Data: \(sharedData)")
-        }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: .sharedNotification, object: nil)
-        
-        return appContext!
-    }
-    
-    public func getContext() -> AppContext? {
-        return appContext
     }
     
     public func printTest() {
@@ -44,14 +31,15 @@ public class Application {
         self.classes.append(name)
     }
     
+    public func setClasses(_ names: [String]) {
+        self.classes.append(contentsOf: names)
+    }
+    
     public func createClass() {
         self.appContext!.createClass(self.classes)
     }
     
-    @objc func handleNotification(_ notification: Notification) {
-        print("Received notification in Project 2")
-        if let value = notification.userInfo?["key"] as? String {
-            print("Received notification with value: \(value)")
-        }
+    public func getInstance(name: String) -> Any? {
+        return self.appContext!.getInstance(name: name)
     }
 }

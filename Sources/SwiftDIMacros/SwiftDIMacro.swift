@@ -42,7 +42,7 @@ public struct ComponentDIMacros: MemberMacro {
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
                                  in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
         
-        guard declaration.isClass else {
+        guard let classDecl = declaration.toClassDecl else {
             context.diagnose(
                 Diagnostic(
                     node: Syntax(node),
@@ -51,40 +51,32 @@ public struct ComponentDIMacros: MemberMacro {
             return []
         }
         
-        let className = declaration.name!
-        func postNotification() {
-              NotificationCenter.default.post(name: .sharedNotification, object: nil, userInfo: ["key": className])
-          }
-//        print("className: \(className)")
-//        if let classType = NSClassFromString(className) as? InitializerDI.Type {
-//            var classInstance = classType.init()
-//            if let argumentItem = node.firstArgument {
-//                if argumentItem.value == "" {
-//                    // error
-//                }
-//                diContext?.addInstance(name: argumentItem.value, instance: classInstance)
-//            }
-//
-//        } else {
-//            print("class not found!")
-//        }
-            
+        let variables = classDecl.diVariables
         
-        let initialCode: String = "convenience init()"
-        let partialSynTax =  SyntaxNodeString(stringLiteral: initialCode)
-   
-        let initializer = try InitializerDeclSyntax(partialSynTax) {
-         
+        if let _ = variables.first(where: { $0.type == nil }) {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustHaveType)
+            )
+            return []
         }
         
-        return []//[DeclSyntax(initializer)]
+        let initializer = try InitializerDeclSyntax(Utils.generateInitialCode(initCode: "required init", variables: variables)) {
+            for diVariable in variables {
+                let name = diVariable.name?.description.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                ExprSyntax("self.\(raw: name) = \(raw: name)")
+            }
+        }
+        
+        return [DeclSyntax(initializer)]
     }
 }
 
 extension ComponentDIMacros: ExtensionMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
         
-        guard declaration.isClass else {
+        guard let classDecl = declaration.toClassDecl else {
             context.diagnose(
                 Diagnostic(
                     node: Syntax(node),
@@ -93,10 +85,44 @@ extension ComponentDIMacros: ExtensionMacro {
             return []
         }
         
+        let variables = classDecl.diVariables
+        
+        if let _ = variables.first(where: { $0.type == nil }) {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustHaveType)
+            )
+            return []
+        }
+        
+        var memberBlockStr = ""
+        var variableStr = ""
+        
+        for diVariable in variables {
+            let name = diVariable.name?.description.trim ?? ""
+            let type = diVariable.type?.description.trim ?? ""
+            var memberStr = "let \(name): \(type)"
+            
+            let isOptional = type.contains("?")
+         
+            if let value = diVariable.value {
+                memberStr += " \(value)"
+            } else if isOptional {
+                memberStr += " = nil"
+            } else {
+                memberStr += " = \(String(describing: diVariable.type?.autoValue ?? ""))"
+            }
+            variableStr += "\(name): \(name), "
+            memberBlockStr.append("\(memberStr)\n")
+        }
+        
+        variableStr = String(variableStr.dropLast(2))
         let syntax: DeclSyntax = """
         extension \(raw: declaration.name!): InitializerDI {
-            static func createInstace() -> InitializerDI{
-                 return self.init()
+            static func createInstace() -> InitializerDI {
+                \(raw: memberBlockStr)
+                return self.init(\(raw: variableStr))
             }
         }
         """

@@ -9,6 +9,8 @@ import SwiftDiagnostics
 
 enum SwiftDIDiagnostic: String, DiagnosticMessage {
     case mustBeClass
+    case mustHaveType
+    case mustBeOptional
     
     var severity: DiagnosticSeverity {
         return .error
@@ -18,6 +20,10 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
         switch self {
         case .mustBeClass:
             return "`@ComponentDI` can only applied to a `class`"
+        case .mustHaveType:
+            return "All variables in @ComponentDI must have `Type`"
+        case .mustBeOptional:
+            return "All variables in @ComponentDI must be `Optional`"
         }
     }
     var  diagnosticID: MessageID {
