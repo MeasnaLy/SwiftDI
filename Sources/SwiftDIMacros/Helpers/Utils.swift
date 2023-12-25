@@ -13,9 +13,11 @@ struct Utils {
     public static func generateInitialCode(initCode: String, variables: [DIVariable]) -> SyntaxNodeString {
         var initialCode: String = initCode + "("
         for diVariable in variables {
-            let name = diVariable.name?.description.trim ?? ""
-            let type = diVariable.type?.description.trim ?? ""
-            initialCode += "\(name): \(type), "
+            if diVariable.isNeedInitiazer {
+                let name = diVariable.name.description.trim
+                let type = diVariable.type?.description.trim ?? ""
+                initialCode += "\(name): \(type), "
+            }
         }
         initialCode = String(initialCode.dropLast(2))
         initialCode += ")"

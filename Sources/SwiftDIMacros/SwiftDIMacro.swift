@@ -28,10 +28,6 @@ public struct ApplicationDIMacros: MemberMacro {
             fatalError("compiler bug: the macro does not have any arguments")
         }
         
-        let packageName = String(describing: argument)
-        print("packageName: \(packageName)")
-        
-//        diContext = Application.shared.startNewContext(package: packageName)
         
         return []
     }
@@ -64,8 +60,10 @@ public struct ComponentDIMacros: MemberMacro {
         
         let initializer = try InitializerDeclSyntax(Utils.generateInitialCode(initCode: "required init", variables: variables)) {
             for diVariable in variables {
-                let name = diVariable.name?.description.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                ExprSyntax("self.\(raw: name) = \(raw: name)")
+                if diVariable.isNeedInitiazer {
+                    let name = diVariable.name.trimmed
+                    ExprSyntax("self.\(raw: name) = \(raw: name)")
+                }
             }
         }
         
@@ -100,21 +98,23 @@ extension ComponentDIMacros: ExtensionMacro {
         var variableStr = ""
         
         for diVariable in variables {
-            let name = diVariable.name?.description.trim ?? ""
-            let type = diVariable.type?.description.trim ?? ""
-            var memberStr = "let \(name): \(type)"
-            
-            let isOptional = type.contains("?")
-         
-            if let value = diVariable.value {
-                memberStr += " \(value)"
-            } else if isOptional {
-                memberStr += " = nil"
-            } else {
-                memberStr += " = \(String(describing: diVariable.type?.autoValue ?? ""))"
+            if diVariable.isNeedInitiazer {
+                let name = diVariable.name.trimmed
+                let type = diVariable.type?.description.trim ?? ""
+                var memberStr = "let \(name): \(type)"
+                
+                let isOptional = type.contains("?")
+                
+                if let value = diVariable.value {
+                    memberStr += " \(value)"
+                } else if isOptional {
+                    memberStr += " = nil"
+                } else {
+                    memberStr += " = \(String(describing: diVariable.type?.autoValue ?? ""))"
+                }
+                variableStr += "\(name): \(name), "
+                memberBlockStr.append("\(memberStr)\n")
             }
-            variableStr += "\(name): \(name), "
-            memberBlockStr.append("\(memberStr)\n")
         }
         
         variableStr = String(variableStr.dropLast(2))

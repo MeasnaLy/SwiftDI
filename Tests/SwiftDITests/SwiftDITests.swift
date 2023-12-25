@@ -111,6 +111,7 @@ final class SwiftDITests: XCTestCase {
             """
             @ComponentDI()
             class Service {
+                private static var age: Int = 0
                 private let age: Int = 0
                 let id: Int
                 private var name: String
@@ -121,14 +122,14 @@ final class SwiftDITests: XCTestCase {
             expandedSource:"""
             
             class Service {
+                private static var age: Int = 0
                 private let age: Int = 0
                 let id: Int
                 private var name: String
                 var gender: String = "male"
                 var node: String?
             
-                required init(age: Int, id: Int, name: String, gender: String, node: String?) {
-                    self.age = age
+                required init(id: Int, name: String, gender: String, node: String?) {
                     self.id = id
                     self.name = name
                     self.gender = gender
@@ -138,13 +139,12 @@ final class SwiftDITests: XCTestCase {
             
             extension Service: InitializerDI {
                 static func createInstace() -> InitializerDI {
-                    let age: Int = 0
                     let id: Int = 0
                     let name: String = ""
                     let gender: String = "male"
                     let node: String? = nil
             
-                    return self.init(age: age, id: id, name: name, gender: gender, node: node)
+                    return self.init(id: id, name: name, gender: gender, node: node)
                 }
             }
             """,

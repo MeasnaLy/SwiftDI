@@ -31,9 +31,18 @@ extension DeclGroupSyntax {
         }
         
         let variableDecls = classDecl.memberBlock.members.compactMap { $0.decl.as(VariableDeclSyntax.self) }
+        
         return variableDecls.compactMap {
             let item = $0.bindings.first
-            return DIVariable(name:  item?.pattern, type: item?.typeAnnotation?.type, value: item?.initializer)
+            let modifiers = $0.modifiers.map { $0.name.text }
+            let specifier = $0.bindingSpecifier.text
+            let name = item!.pattern
+            let type = item?.typeAnnotation?.type
+            let value = item?.initializer
+            
+            let diVariable  = DIVariable(modifiers: modifiers, specifier: specifier, name: name, type: type, value: value)
+            
+            return diVariable
         }
     }
     
