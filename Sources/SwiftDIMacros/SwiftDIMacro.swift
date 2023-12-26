@@ -153,10 +153,13 @@ public struct InjectClassMaros: AccessorMacro {
         return [
         """
         get {
-            if let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") {
-                return instance
+            guard let context = Application.shared.getContext() else {
+                return nil
             }
-            return nil
+            guard let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") else {
+                return nil
+            }
+            return instance
         }
         """
         ]

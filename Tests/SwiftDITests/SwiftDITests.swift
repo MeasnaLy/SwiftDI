@@ -114,10 +114,13 @@ final class SwiftDITests: XCTestCase {
             class Service {
                 var test: Test? {
                     get {
-                        if let instance: Test = context.getInstance(key: "Test") {
-                            return instance
+                        guard let context = Application.shared.getContext() else {
+                            return nil
                         }
-                        return nil
+                        guard let instance: Test = context.getInstance(key: "Test") else {
+                            return nil
+                        }
+                        return instance
                     }
                 }
                 private var name: String
