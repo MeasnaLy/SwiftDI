@@ -37,7 +37,7 @@ struct DIVariable {
         
         let isInjectClassAttribute = attributes.first { $0 == "InjectClass"} != nil
         
-        if isVar && isInjectClassAttribute {
+        if isInjectClassAttribute {
             return false
         }
         

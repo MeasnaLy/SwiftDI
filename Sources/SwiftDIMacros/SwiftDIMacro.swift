@@ -164,8 +164,6 @@ public struct InjectClassMaros: AccessorMacro {
         """
         ]
     }
-    
-    
 }
 
 

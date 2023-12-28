@@ -129,4 +129,38 @@ final class SwiftDITests: XCTestCase {
             """,
             macros: testMacros)
     }
+    
+    func testInjectClassWithArgument() {
+        assertMacroExpansion(
+            """
+            class Service {
+                @InjectClass(.new)
+                var test: Test?
+                private var name: String
+            
+                @InjectClass(.context)
+                var test1: Test?
+                private var name: String
+            }
+            """,
+            expandedSource:"""
+            
+            class Service {
+                var test: Test? {
+                    get {
+                        guard let context = Application.shared.getContext() else {
+                            return nil
+                        }
+                        guard let instance: Test = context.getInstance(key: "Test") else {
+                            return nil
+                        }
+                        return instance
+                    }
+                }
+                private var name: String
+            }
+            
+            """,
+            macros: testMacros)
+    }
 }
