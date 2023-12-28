@@ -2,7 +2,7 @@ import SwiftDI
 import Foundation
 
 @Component
-class Sample {
+class UserRepository {
     private var age: Int = 0
     let id: Int
     private var name: String
@@ -11,51 +11,48 @@ class Sample {
 }
 
 @Component
-class User {
-    private var id: Int
+class UserViewModel {
+    @Inject(.context)
+    var userRepository: UserRepository?
 }
 
 class Main {
-    @InjectClass
-    var sample: Sample?
+    @Inject(.context)
+    var userViewModel: UserViewModel?
     
-    @InjectClass
-    var sample2: Sample?
+    @Inject(.context)
+    var userViewModel1: UserViewModel?
     
-    @InjectClass
-    var user: User?
+    @Inject(.new)
+    var userViewModelNew: UserViewModel?
 }
 
-let classes:[InitializerDI.Type] = [Sample.self, User.self]
+let classes:[InitializerDI.Type] = [UserRepository.self, UserViewModel.self]
 let context = Application.shared.startNewContext(classes: classes)
 
 let main = Main()
 
-if let user = main.user {
-    let userRefId = Unmanaged.passUnretained(user).toOpaque()
-    print("user refId: \(userRefId)")
+if let userViewModel = main.userViewModel {
+    let id = Unmanaged.passUnretained(userViewModel).toOpaque()
+    print("user refId: \(id)")
 }
 
-if let userFromContext:User = context.getInstance(key: "User") {
-    let userRefIdFromContextId = Unmanaged.passUnretained(userFromContext).toOpaque()
-    print("user from context refId: \(userRefIdFromContextId)")
+if let userViewModel:UserViewModel = context.getInstance(key: "UserViewModel") {
+    let id = Unmanaged.passUnretained(userViewModel).toOpaque()
+    print("id from context: \(id)")
 }
 
-if let sample = main.sample, let sample2 = main.sample2 {
-    let sampleRefId = Unmanaged.passUnretained(sample).toOpaque()
-    print("sample refId: \(sampleRefId)")
-    
-    let sample2RefId = Unmanaged.passUnretained(sample2).toOpaque()
-    print("sample2 refId: \(sample2RefId)")
+if let userViewModel1 = main.userViewModel1 {
+    let id1 = Unmanaged.passUnretained(userViewModel1).toOpaque()
+    print("user refId: \(id1)")
 }
 
-if let sampleFromContext:Sample = context.getInstance(key: "Sample") {
-    let sampleFromContextId = Unmanaged.passUnretained(sampleFromContext).toOpaque()
-    print("sample from context refId: \(sampleFromContextId)")
+if let userViewModelNew = main.userViewModelNew {
+    let newId = Unmanaged.passUnretained(userViewModelNew).toOpaque()
+    print("new user refId: \(newId)")
 }
 
 print("finished")
-
 
 
 

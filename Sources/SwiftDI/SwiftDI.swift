@@ -13,5 +13,5 @@ public macro Component() = #externalMacro(module: "SwiftDIMacros", type: "Compon
 //@attached(peer)
 //public macro InjectClass() = #externalMacro(module: "SwiftDIMacros", type: "InjectClassMaros")
 
-@attached(accessor)
-public macro InjectClass() = #externalMacro(module: "SwiftDIMacros", type: "InjectClassMaros")
+//@attached(accessor)
+//public macro InjectClass() = #externalMacro(module: "SwiftDIMacros", type: "InjectClassMaros")

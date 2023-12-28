@@ -9,7 +9,7 @@ import SwiftDIMacros
 let testMacros: [String: Macro.Type] = [
 //    "ApplicationDI" : ApplicationDIMacros.self,
     "Component" : ComponentMacros.self,
-    "InjectClass": InjectClassMaros.self
+//    "InjectClass": InjectClassMaros.self
     
 ]
 #endif
@@ -100,47 +100,46 @@ final class SwiftDITests: XCTestCase {
             macros: testMacros)
     }
     
-    func testInjectClass() {
-        assertMacroExpansion(
-            """
-            class Service {
-                @InjectClass
-                var test: Test?
-                private var name: String
-            }
-            """,
-            expandedSource:"""
-            
-            class Service {
-                var test: Test? {
-                    get {
-                        guard let context = Application.shared.getContext() else {
-                            return nil
-                        }
-                        guard let instance: Test = context.getInstance(key: "Test") else {
-                            return nil
-                        }
-                        return instance
-                    }
-                }
-                private var name: String
-            }
-            
-            """,
-            macros: testMacros)
-    }
+//    func testInjectClass() {
+//        assertMacroExpansion(
+//            """
+//            class Service {
+//                @InjectClass
+//                var test: Test?
+//                private var name: String
+//            }
+//            """,
+//            expandedSource:"""
+//            
+//            class Service {
+//                var test: Test? {
+//                    get {
+//                        guard let context = Application.shared.getContext() else {
+//                            return nil
+//                        }
+//                        guard let instance: Test = context.getInstance(key: "Test") else {
+//                            return nil
+//                        }
+//                        return instance
+//                    }
+//                }
+//                private var name: String
+//            }
+//            
+//            """,
+//            macros: testMacros)
+//    }
     
     func testInjectClassWithArgument() {
         assertMacroExpansion(
             """
+            @Component
             class Service {
-                @InjectClass(.new)
+                @Inject(.new)
                 var test: Test?
-                private var name: String
             
-                @InjectClass(.context)
+                @Inject(.context)
                 var test1: Test?
-                private var name: String
             }
             """,
             expandedSource:"""

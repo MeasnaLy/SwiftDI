@@ -35,9 +35,9 @@ struct DIVariable {
             return false
         }
         
-        let isInjectClassAttribute = attributes.first { $0 == "InjectClass"} != nil
+        let isInjectAttribute = attributes.first { $0.hasPrefix("Inject")} != nil
         
-        if isInjectClassAttribute {
+        if isInjectAttribute {
             return false
         }
         

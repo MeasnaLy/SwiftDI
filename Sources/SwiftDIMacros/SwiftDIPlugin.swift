@@ -13,6 +13,6 @@ struct SwiftDIPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
 //        ApplicationDIMacros.self,
         ComponentMacros.self,
-        InjectClassMaros.self
+//        InjectClassMaros.self
     ]
 }

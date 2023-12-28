@@ -126,44 +126,44 @@ extension ComponentMacros: ExtensionMacro {
     }
 }
 
-public struct InjectClassMaros: AccessorMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
-        
-        guard let varDecl  = declaration.as(VariableDeclSyntax.self) else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeClass)
-            )
-            return []
-        }
-        
-        if !varDecl.diVariable.isValidInjectClass {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.invalidVariableInjectClass)
-            )
-            return []
-        }
-        
-        let type = varDecl.diVariable.typeToStringWithoutOptional
-        
-        
-        return [
-        """
-        get {
-            guard let context = Application.shared.getContext() else {
-                return nil
-            }
-            guard let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") else {
-                return nil
-            }
-            return instance
-        }
-        """
-        ]
-    }
-}
+//public struct InjectClassMaros: AccessorMacro {
+//    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
+//        
+//        guard let varDecl  = declaration.as(VariableDeclSyntax.self) else {
+//            context.diagnose(
+//                Diagnostic(
+//                    node: Syntax(node),
+//                    message: SwiftDIDiagnostic.mustBeClass)
+//            )
+//            return []
+//        }
+//        
+//        if !varDecl.diVariable.isValidInjectClass {
+//            context.diagnose(
+//                Diagnostic(
+//                    node: Syntax(node),
+//                    message: SwiftDIDiagnostic.invalidVariableInjectClass)
+//            )
+//            return []
+//        }
+//        
+//        let type = varDecl.diVariable.typeToStringWithoutOptional
+//        
+//        
+//        return [
+//        """
+//        get {
+//            guard let context = Application.shared.getContext() else {
+//                return nil
+//            }
+//            guard let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") else {
+//                return nil
+//            }
+//            return instance
+//        }
+//        """
+//        ]
+//    }
+//}
 
 

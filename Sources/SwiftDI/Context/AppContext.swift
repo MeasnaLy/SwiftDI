@@ -38,6 +38,10 @@ public class AppContext {
         return nil
     }
     
+    func createNewInstance(_ classType: InitializerDI.Type) -> InitializerDI {
+        return classType.createInstace()
+    }
+    
     func printMap() {
         print("map: \(self.mapKeyInstance)")
     }
