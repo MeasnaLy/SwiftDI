@@ -65,7 +65,6 @@ struct DIVariable {
         let isValidSpacifier = specifier == Keyword.var.rawValue
         let isValidType = KeywordType(rawValue: typeToString) == KeywordType.Custom
         
-        
         return isValidAttribute && isValidModifier && isValidSpacifier && isValidType && isOptional
     }
     

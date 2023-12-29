@@ -7,7 +7,7 @@ import XCTest
 import SwiftDIMacros
 
 let testMacros: [String: Macro.Type] = [
-//    "ApplicationDI" : ApplicationDIMacros.self,
+    "EnableConfiguration" : EnableConfigurationMacros.self,
     "Component" : ComponentMacros.self,
 //    "InjectClass": InjectClassMaros.self
     
@@ -16,20 +16,28 @@ let testMacros: [String: Macro.Type] = [
 
 final class SwiftDITests: XCTestCase {
     
-//    func testMacroApplicationDI() {
-//        assertMacroExpansion(
-//            """
-//            @ApplicationDI("SwiftDITests.SwiftDITests")
-//            class Application {
-//            }
-//            """,
-//            expandedSource:"""
-//            
-//            class Application {
-//            }
-//            """,
-//            macros: testMacros)
-//    }
+    func testMacroEnableConfiguration() {
+        assertMacroExpansion(
+            """
+            @EnableConfiguration
+            class Application : UIApplicationDelegate {
+                @Config
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    return true
+                }
+            }
+            """,
+            expandedSource:"""
+            
+            class Application : UIApplicationDelegate {
+                @Config
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    return true
+                }
+            }
+            """,
+            macros: testMacros)
+    }
     
     func testMacroComponent() {
         assertMacroExpansion(
@@ -48,7 +56,8 @@ final class SwiftDITests: XCTestCase {
             
             extension Service: InitializerDI {
                 static func createInstace() -> InitializerDI {
-                     return self.init()
+            
+                    return self.init()
                 }
             }
             """,
@@ -96,69 +105,6 @@ final class SwiftDITests: XCTestCase {
                     return self.init(id: id, name: name, gender: gender, node: node)
                 }
             }
-            """,
-            macros: testMacros)
-    }
-    
-//    func testInjectClass() {
-//        assertMacroExpansion(
-//            """
-//            class Service {
-//                @InjectClass
-//                var test: Test?
-//                private var name: String
-//            }
-//            """,
-//            expandedSource:"""
-//            
-//            class Service {
-//                var test: Test? {
-//                    get {
-//                        guard let context = Application.shared.getContext() else {
-//                            return nil
-//                        }
-//                        guard let instance: Test = context.getInstance(key: "Test") else {
-//                            return nil
-//                        }
-//                        return instance
-//                    }
-//                }
-//                private var name: String
-//            }
-//            
-//            """,
-//            macros: testMacros)
-//    }
-    
-    func testInjectClassWithArgument() {
-        assertMacroExpansion(
-            """
-            @Component
-            class Service {
-                @Inject(.new)
-                var test: Test?
-            
-                @Inject(.context)
-                var test1: Test?
-            }
-            """,
-            expandedSource:"""
-            
-            class Service {
-                var test: Test? {
-                    get {
-                        guard let context = Application.shared.getContext() else {
-                            return nil
-                        }
-                        guard let instance: Test = context.getInstance(key: "Test") else {
-                            return nil
-                        }
-                        return instance
-                    }
-                }
-                private var name: String
-            }
-            
             """,
             macros: testMacros)
     }

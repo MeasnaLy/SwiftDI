@@ -36,4 +36,28 @@ extension DeclGroupSyntax {
             $0.diVariable
         }
     }
+    
+    var inheritanceClauses: [String]  {
+        guard let classDecl = self.toClassDecl else {
+            return []
+        }
+        
+        guard let inheritanceClause = classDecl.inheritanceClause else {
+            return []
+        }
+        
+        return inheritanceClause.inheritedTypes.compactMap { $0.description.trim }
+    }
+    
+    var diFunctions: [DIFunction] {
+        guard let classDecl = self.toClassDecl else {
+            return []
+        }
+        
+        let functionDecls = classDecl.memberBlock.members.compactMap { $0.decl.as(FunctionDeclSyntax.self) }
+        
+        return functionDecls.compactMap {
+            $0.diFunction
+        }
+    }
 }

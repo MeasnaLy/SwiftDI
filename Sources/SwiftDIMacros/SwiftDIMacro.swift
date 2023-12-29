@@ -5,28 +5,43 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 import Foundation
 
-//public struct ApplicationDIMacros: MemberMacro {
-//    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
-//                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
-//                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-//        
-//        guard declaration.isClass else {
-//            context.diagnose(
-//                Diagnostic(
-//                    node: Syntax(node),
-//                    message: SwiftDIDiagnostic.mustBeClass)
-//            )
-//            return []
-//        }
-//       
-//        guard let argument = node.arguments else {
-//            fatalError("compiler bug: the macro does not have any arguments")
-//        }
-//        
-//        
-//        return []
-//    }
-//}
+public struct EnableConfigurationMacros: MemberMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
+                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
+                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        
+        guard let classDecl = declaration.toClassDecl else {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeClass)
+            )
+            return []
+        }
+        
+        if classDecl.inheritanceClauses.first(where: { $0 == "UIApplicationDelegate" }) == nil {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeConformToUIApplicationDelegate)
+            )
+            return []
+        }
+        
+        let isConfigAttributeExist = classDecl.diFunctions.first(where: {$0.attributes.contains { $0 == "Config"}}) != nil
+        
+        if !isConfigAttributeExist {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustHaveAttributeConfig)
+            )
+            return []
+        }
+    
+        return []
+    }
+}
 
 public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
@@ -125,45 +140,5 @@ extension ComponentMacros: ExtensionMacro {
         return [syntax.cast(ExtensionDeclSyntax.self)]
     }
 }
-
-//public struct InjectClassMaros: AccessorMacro {
-//    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
-//        
-//        guard let varDecl  = declaration.as(VariableDeclSyntax.self) else {
-//            context.diagnose(
-//                Diagnostic(
-//                    node: Syntax(node),
-//                    message: SwiftDIDiagnostic.mustBeClass)
-//            )
-//            return []
-//        }
-//        
-//        if !varDecl.diVariable.isValidInjectClass {
-//            context.diagnose(
-//                Diagnostic(
-//                    node: Syntax(node),
-//                    message: SwiftDIDiagnostic.invalidVariableInjectClass)
-//            )
-//            return []
-//        }
-//        
-//        let type = varDecl.diVariable.typeToStringWithoutOptional
-//        
-//        
-//        return [
-//        """
-//        get {
-//            guard let context = Application.shared.getContext() else {
-//                return nil
-//            }
-//            guard let instance:\(raw: type) = context.getInstance(key: "\(raw: type)") else {
-//                return nil
-//            }
-//            return instance
-//        }
-//        """
-//        ]
-//    }
-//}
 
 
