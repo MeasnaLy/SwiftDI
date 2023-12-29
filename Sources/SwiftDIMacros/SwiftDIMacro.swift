@@ -5,6 +5,8 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 import Foundation
 
+private var allClassWithComponets:Set<String> = []
+
 public struct EnableConfigurationMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
@@ -28,13 +30,22 @@ public struct EnableConfigurationMacros: MemberMacro {
             return []
         }
         
-        let isConfigAttributeExist = classDecl.diFunctions.first(where: {$0.attributes.contains { $0 == "Config"}}) != nil
-        
-        if !isConfigAttributeExist {
+        guard let applicationDidFinishLaunchingWithOptions = classDecl.diFunctions.first(where: { $0 == DIFunction.applicationDidFinishLaunchingWithOptions }) else {
             context.diagnose(
                 Diagnostic(
                     node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustHaveAttributeConfig)
+                    message: SwiftDIDiagnostic.missingImplementation)
+            )
+            return []
+        }
+        
+        let isMacroConfigContextExist = applicationDidFinishLaunchingWithOptions.statemets.first(where: { $0.contains("#ConfigContext") }) != nil
+        
+        if !isMacroConfigContextExist {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustHaveMaroConfigContext)
             )
             return []
         }
@@ -43,11 +54,22 @@ public struct EnableConfigurationMacros: MemberMacro {
     }
 }
 
+public struct ConfigContextMacros : ExpressionMacro {
+    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
+        
+        let codeExpr: ExprSyntax = "ApplicationContext.shared.startContext(classes: [\(raw: allClassWithComponets.joined(separator: ","))])"
+        
+        return codeExpr.trimmed
+        
+    }
+}
+
 public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
                                  in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
         
+
         guard let classDecl = declaration.toClassDecl else {
             context.diagnose(
                 Diagnostic(
@@ -75,6 +97,10 @@ public struct ComponentMacros: MemberMacro {
                     ExprSyntax("self.\(raw: name) = \(raw: name)")
                 }
             }
+        }
+        
+        if let className = declaration.name {
+            allClassWithComponets.insert(("\(className).self"))
         }
         
         return [DeclSyntax(initializer)]

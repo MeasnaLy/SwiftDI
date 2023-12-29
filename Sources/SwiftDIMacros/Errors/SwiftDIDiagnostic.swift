@@ -12,7 +12,9 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
     case mustHaveType
     case mustBeOptional
     case mustBeConformToUIApplicationDelegate
-    case mustHaveAttributeConfig
+    case mustHaveMaroConfigContext
+    case mustBeFunction
+    case missingImplementation
     
     var severity: DiagnosticSeverity {
         return .error
@@ -28,8 +30,12 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
             return "All variables in `@Component` must be `Optional`"
         case .mustBeConformToUIApplicationDelegate:
             return "`class` must be conform to `UIApplicationDelegate`"
-        case .mustHaveAttributeConfig:
-            return "`@EnableConfiguration` must be has attribute `@Config` on Function"
+        case .mustHaveMaroConfigContext:
+            return "`@EnableConfiguration` must be has macro `#ConfigContext` on Function"
+        case .mustBeFunction:
+            return "`@Config` only works on functions"
+        case .missingImplementation:
+            return "`@Component` missing implementation of ApplicationDidFinishLaunchingWithOptions function"
         }
         
     }

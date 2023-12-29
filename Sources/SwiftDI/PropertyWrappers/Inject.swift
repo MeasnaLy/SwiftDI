@@ -10,7 +10,7 @@ import Foundation
 @propertyWrapper public struct Inject<Value : InitializerDI> {
     public var wrappedValue: Value? {
         get {
-            guard let context = Application.shared.getContext() else {
+            guard let context = ApplicationContext.shared.getContext() else {
                 return nil
             }
             

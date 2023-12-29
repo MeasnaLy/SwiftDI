@@ -15,7 +15,7 @@ public protocol InitializerDI {
 public extension InitializerDI {
     func getInstance<T : InitializerDI>(_ type: T.Type) -> T? {
         let key = NSStringFromClass(type as! AnyClass)
-        if let context = Application.shared.getContext() {
+        if let context = ApplicationContext.shared.getContext() {
             if let instance:T = context.getInstance(key: key) {
                 return instance
             }

@@ -16,13 +16,18 @@ extension FunctionDeclSyntax {
             return ""
         }
 //        let modifiers = self.modifiers.map { $0.name.text }
-//        let specifier = self.bindingSpecifier.text
         let name = self.name.description
-//        let type = item?.typeAnnotation?.type
-//        let value = item?.initializer
-//        let accessorBlock = item?.accessorBlock
+        let paramaters = self.signature.parameterClause.parameters.map { DIParamater(firstName: $0.firstName.description.trim, secondName: $0.secondName?.description.trim ?? "") }
+        let retrunType = self.signature.returnClause?.type.description.trim ?? ""
         
-        let diFunction  = DIFunction(attributes: attributes, name: name)
+        var statemets:[String] = []
+        
+        if let body = self.body {
+            statemets = body.statements.map { $0.item.description.trim }
+        }
+        
+        
+        let diFunction  = DIFunction(attributes: attributes, name: name, paramaters: paramaters, statemets: statemets, returnType: retrunType)
         
         return diFunction
     }

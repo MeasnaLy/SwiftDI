@@ -9,7 +9,7 @@ import SwiftDIMacros
 let testMacros: [String: Macro.Type] = [
     "EnableConfiguration" : EnableConfigurationMacros.self,
     "Component" : ComponentMacros.self,
-//    "InjectClass": InjectClassMaros.self
+    "ConfigContext": ConfigContextMacros.self
     
 ]
 #endif
@@ -21,8 +21,8 @@ final class SwiftDITests: XCTestCase {
             """
             @EnableConfiguration
             class Application : UIApplicationDelegate {
-                @Config
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context = #ConfigContext
                     return true
                 }
             }
@@ -30,8 +30,30 @@ final class SwiftDITests: XCTestCase {
             expandedSource:"""
             
             class Application : UIApplicationDelegate {
-                @Config
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context =         ApplicationContext.shared.startContext(classes: [])
+                    return true
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+    
+    func testMacroCofigContext() {
+        assertMacroExpansion(
+            """
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context = #ConfigContext
+                    return true
+                }
+            }
+            """,
+            expandedSource:"""
+            
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context =         ApplicationContext.shared.startContext(classes: [])
                     return true
                 }
             }

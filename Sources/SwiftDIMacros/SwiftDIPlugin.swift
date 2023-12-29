@@ -13,5 +13,6 @@ struct SwiftDIPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         EnableConfigurationMacros.self,
         ComponentMacros.self,
+        ConfigContextMacros.self
     ]
 }

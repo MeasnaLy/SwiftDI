@@ -25,10 +25,22 @@ class Main {
     
     @Inject(.new)
     var userViewModelNew: UserViewModel?
+    
+    func application(_ application: String, didFinishLaunchingWithOptions launchOptions: [String : Any]? = nil) -> Bool {
+        let context = #ConfigContext
+        
+        if let userViewModel:UserViewModel = context.getInstance(key: "UserViewModel") {
+            let id = Unmanaged.passUnretained(userViewModel).toOpaque()
+            print("id from context: \(id)")
+        }
+
+        
+        return true
+    }
 }
 
 let classes:[InitializerDI.Type] = [UserRepository.self, UserViewModel.self]
-let context = Application.shared.startNewContext(classes: classes)
+let context = ApplicationContext.shared.startContext(classes: classes)
 
 let main = Main()
 
@@ -52,7 +64,11 @@ if let userViewModelNew = main.userViewModelNew {
     print("new user refId: \(newId)")
 }
 
+let _ = main.application("Test")
+
 print("finished")
+
+
 
 
 

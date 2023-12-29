@@ -4,8 +4,11 @@
 import Foundation
 
 @attached(member)
-public macro EnableConfiguration(_ packageName: String) = #externalMacro(module: "SwiftDIMacros", type: "EnableConfigurationMacros")
+public macro EnableConfiguration() = #externalMacro(module: "SwiftDIMacros", type: "EnableConfigurationMacros")
 
 @attached(extension, conformances: InitializerDI, names: arbitrary)
 @attached(member, names: named(init))
 public macro Component() = #externalMacro(module: "SwiftDIMacros", type: "ComponentMacros")
+
+@freestanding(expression)
+public macro ConfigContext() -> AppContext = #externalMacro(module: "SwiftDIMacros", type: "ConfigContextMacros")

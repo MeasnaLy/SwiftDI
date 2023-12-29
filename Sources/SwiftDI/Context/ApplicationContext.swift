@@ -8,13 +8,16 @@
 import Foundation
 import SwiftDIMacros
 
-public class Application {
-    public static let shared = Application()
+public class ApplicationContext {
+    public static let shared = ApplicationContext()
     private var appContext: AppContext?
     
     private init() {}
     
-    public func startNewContext(classes: [InitializerDI.Type]) -> AppContext {
+    public func startContext(classes: [InitializerDI.Type]) -> AppContext {
+        if let appContext {
+            return appContext
+        }
         appContext = AppContext(classes: classes)
         return appContext!
     }
