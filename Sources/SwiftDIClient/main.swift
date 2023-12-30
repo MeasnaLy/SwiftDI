@@ -38,6 +38,8 @@ class ApiClientMock : ApiClient {
     }
 }
 
+var isTest: Bool = true
+
 class Main {
         
     @Inject
@@ -49,7 +51,7 @@ class Main {
     @Inject(.new)
     var userViewModelNew: UserViewModel?
     
-    @Inject(.new, qualifier: ApiClientMock.self)
+    @Inject(.new, qualifier: isTest ? ApiClientMock.self : ApiClientImpl.self)
     var apiClient: ApiClient?
     
     func application(_ application: String, didFinishLaunchingWithOptions launchOptions: [String : Any]? = nil) -> Bool {
@@ -59,7 +61,6 @@ class Main {
             let id = Unmanaged.passUnretained(userViewModel).toOpaque()
             print("id from context: \(id)")
         }
-
         
         return true
     }
@@ -76,14 +77,8 @@ if let userViewModel = main.userViewModel {
     print("user refId: \(id)")
 }
 
-//if let userViewModel:UserViewModel = context.getInstance(className: "UserViewModel") {
-//    let id = Unmanaged.passUnretained(userViewModel).toOpaque()
-//    print("id from context: \(id)")
-//}
-
 if let userViewModel1 = main.userViewModel1 {
     let id1 = Unmanaged.passUnretained(userViewModel1).toOpaque()
-
     print("user refId: \(id1)")
 }
 
@@ -99,8 +94,3 @@ if let apiClient = main.apiClient {
 }
 
 print("finished")
-
-
-
-
-
