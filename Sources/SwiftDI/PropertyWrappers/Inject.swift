@@ -61,7 +61,7 @@ public enum InjectType {
        
             switch type {
             case .context:
-                guard let instance = context.getInstanceProtocol(className: className) else {
+                guard let instance = context.getInstance(classNameOrProtocol: className) else {
                     return nil
                 }
                 return instance as? Value

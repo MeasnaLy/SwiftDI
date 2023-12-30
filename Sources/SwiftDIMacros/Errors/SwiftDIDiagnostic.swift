@@ -15,6 +15,7 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
     case mustHaveMaroConfigContext
     case mustBeFunction
     case missingImplementation
+    case mustBeProtocol
     
     var severity: DiagnosticSeverity {
         return .error
@@ -36,6 +37,8 @@ enum SwiftDIDiagnostic: String, DiagnosticMessage {
             return "`@Config` only works on functions"
         case .missingImplementation:
             return "`@Component` missing implementation of ApplicationDidFinishLaunchingWithOptions function"
+        case .mustBeProtocol:
+            return "`@Contract` can only applied to a `@objc protocol`"
         }
         
     }

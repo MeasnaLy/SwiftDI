@@ -62,6 +62,21 @@ final class SwiftDITests: XCTestCase {
             macros: testMacros)
     }
     
+    func testMacroContract() {
+        assertMacroExpansion(
+            """
+            @Contract
+            @objc protocol Service {
+            }
+            """,
+            expandedSource:"""
+            
+            @objc protocol Service {
+            }
+            """,
+            macros: testMacros)
+    }
+    
     func testMacroComponent() {
         assertMacroExpansion(
             """

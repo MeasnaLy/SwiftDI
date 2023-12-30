@@ -14,11 +14,11 @@ public class ApplicationContext {
     
     private init() {}
     
-    public func startContext(classes: [InitializerDI.Type]) -> AppContext {
+    public func startContext(classes: [InitializerDI.Type], protocols: [Protocol] = []) -> AppContext {
         if let appContext {
             return appContext
         }
-        appContext = AppContext(classes: classes)
+        appContext = AppContext(classes: classes, protocols: protocols)
         return appContext!
     }
     

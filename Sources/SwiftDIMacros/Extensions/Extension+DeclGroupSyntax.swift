@@ -9,6 +9,10 @@ import SwiftSyntax
 
 extension DeclGroupSyntax {
     
+    var toProtocolDecl: ProtocolDeclSyntax? {
+        self.as(ProtocolDeclSyntax.self)
+    }
+    
     var toClassDecl: ClassDeclSyntax? {
         self.as(ClassDeclSyntax.self)
     }
@@ -58,6 +62,15 @@ extension DeclGroupSyntax {
         
         return functionDecls.compactMap {
             $0.diFunction
+        }
+    }
+    
+    var attributeStrings: [String] {        
+        return self.attributes.map {
+            if let item = $0.as(AttributeSyntax.self) {
+                return item.name
+            }
+            return ""
         }
     }
 }

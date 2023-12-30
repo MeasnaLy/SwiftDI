@@ -19,6 +19,7 @@ class UserViewModel {
 class UserViewModelNew {
 }
 
+@Contract
 @objc protocol ApiClient {
     func fetchData()
 }
@@ -48,36 +49,37 @@ class Main {
     @Inject(.new)
     var userViewModelNew: UserViewModel?
     
-    @Inject(.new, qualifier: ApiClientImpl.self)
+    @Inject(.new, qualifier: ApiClientMock.self)
     var apiClient: ApiClient?
     
-//    func application(_ application: String, didFinishLaunchingWithOptions launchOptions: [String : Any]? = nil) -> Bool {
-//        let context = #ConfigContext
-//        
-//        if let userViewModel:UserViewModel = context.getInstance(className: "UserViewModel") {
-//            let id = Unmanaged.passUnretained(userViewModel).toOpaque()
-//            print("id from context: \(id)")
-//        }
-//
-//        
-//        return true
-//    }
+    func application(_ application: String, didFinishLaunchingWithOptions launchOptions: [String : Any]? = nil) -> Bool {
+        let context = #ConfigContext
+        
+        if let userViewModel:UserViewModel = context.getInstance(className: "UserViewModel") {
+            let id = Unmanaged.passUnretained(userViewModel).toOpaque()
+            print("id from context: \(id)")
+        }
+
+        
+        return true
+    }
 }
 
-let classes:[InitializerDI.Type] = [UserRepository.self, UserViewModel.self, ApiClientImpl.self, ApiClientMock.self]
-let context = ApplicationContext.shared.startContext(classes: classes)
+//let classes:[InitializerDI.Type] = [UserRepository.self, UserViewModel.self, ApiClientImpl.self, ApiClientMock.self]
+//let context = ApplicationContext.shared.startContext(classes: classes)
 
 let main = Main()
+let _ = main.application("Test")
 
 if let userViewModel = main.userViewModel {
     let id = Unmanaged.passUnretained(userViewModel).toOpaque()
     print("user refId: \(id)")
 }
 
-if let userViewModel:UserViewModel = context.getInstance(className: "UserViewModel") {
-    let id = Unmanaged.passUnretained(userViewModel).toOpaque()
-    print("id from context: \(id)")
-}
+//if let userViewModel:UserViewModel = context.getInstance(className: "UserViewModel") {
+//    let id = Unmanaged.passUnretained(userViewModel).toOpaque()
+//    print("id from context: \(id)")
+//}
 
 if let userViewModel1 = main.userViewModel1 {
     let id1 = Unmanaged.passUnretained(userViewModel1).toOpaque()
@@ -89,9 +91,6 @@ if let userViewModelNew = main.userViewModelNew {
     let newId = Unmanaged.passUnretained(userViewModelNew).toOpaque()
     print("new user refId: \(newId)")
 }
-
-context.mapKeyProtocol["ApiClient"] = ApiClient.self
-//let _ = main.application("Test")
 
 if let apiClient = main.apiClient {
     apiClient.fetchData()

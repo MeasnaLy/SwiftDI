@@ -10,24 +10,31 @@ import Foundation
 public class AppContext {
     
     private var mapKeyInstance: [String: Any] = [:]
-    private var classes: [InitializerDI.Type] = []
     private var mapKeyType: [String: InitializerDI.Type] = [:]
+    private var mapKeyProtocol: [String: Protocol] = [:]
     
-    public var mapKeyProtocol: [String: Protocol] = [:]
+    private var classes: [InitializerDI.Type] = []
     
-    init(classes: [InitializerDI.Type]) {
-        self.classes = classes
-        self.createClass()
+    init(classes: [InitializerDI.Type], protocols: [Protocol] = []) {
+        self.createClass(classes: classes)
+        self.createProtocols(protocols: protocols)
     }
     
-    func createClass() {
+    private func createClass(classes: [InitializerDI.Type]) {
         
-        for item in self.classes {
+        for item in classes {
             let className = String(describing: item)
             let classInstance = item.createInstace()
             
             mapKeyInstance[className] = classInstance
             mapKeyType[className] = item
+        }
+    }
+    
+    private func createProtocols(protocols: [Protocol]) {
+        for item in protocols {
+            let protocolName = String(describing: item)
+            mapKeyProtocol[protocolName] = item
         }
     }
     
@@ -49,12 +56,13 @@ public class AppContext {
         return getInstance(className: className)
     }
     
-    public func getInstanceProtocol(className: String) -> Any? {
-        if let instance = self.mapKeyInstance[className] {
+    // only for package use
+    func getInstance(classNameOrProtocol: String) -> Any? {
+        if let instance = self.mapKeyInstance[classNameOrProtocol] {
             return instance
         }
         
-        if let key = checkIfClassNameIsProtocolAndReturnKeySubClassName(className) {
+        if let key = checkIfClassNameIsProtocolAndReturnKeySubClassName(classNameOrProtocol) {
             let instance = self.mapKeyInstance[key]!
             return instance
         }
@@ -62,9 +70,9 @@ public class AppContext {
         return nil
     }
     
-    public func createNewInstance(_ classType: InitializerDI.Type) -> InitializerDI {
-        return classType.createInstace()
-    }
+//    public func createNewInstance(_ classType: InitializerDI.Type) -> InitializerDI {
+//        return classType.createInstace()
+//    }
     
     public func createNewInstance(_ className: String) -> InitializerDI? {
 
