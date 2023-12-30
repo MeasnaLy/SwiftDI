@@ -64,6 +64,14 @@ public struct ConfigContextMacros : ExpressionMacro {
     }
 }
 
+public struct ContractMacros: MemberMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        return []
+    }
+    
+    
+}
+
 public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,

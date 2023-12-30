@@ -9,7 +9,8 @@ import SwiftDIMacros
 let testMacros: [String: Macro.Type] = [
     "EnableConfiguration" : EnableConfigurationMacros.self,
     "Component" : ComponentMacros.self,
-    "ConfigContext": ConfigContextMacros.self
+    "ConfigContext": ConfigContextMacros.self,
+    "Contract": ContractMacros.self,
     
 ]
 #endif

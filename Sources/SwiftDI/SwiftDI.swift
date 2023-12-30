@@ -10,5 +10,8 @@ public macro EnableConfiguration() = #externalMacro(module: "SwiftDIMacros", typ
 @attached(member, names: named(init))
 public macro Component() = #externalMacro(module: "SwiftDIMacros", type: "ComponentMacros")
 
+@attached(member)
+public macro Contract() = #externalMacro(module: "SwiftDIMacros", type: "ContractMacros")
+
 @freestanding(expression)
 public macro ConfigContext() -> AppContext = #externalMacro(module: "SwiftDIMacros", type: "ConfigContextMacros")
