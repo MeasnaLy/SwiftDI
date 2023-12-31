@@ -43,6 +43,7 @@ final class SwiftDITests: XCTestCase {
     func testMacroCofigContext() {
         assertMacroExpansion(
             """
+            @EnableConfiguration
             class Application : UIApplicationDelegate {
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
                     let context = #ConfigContext

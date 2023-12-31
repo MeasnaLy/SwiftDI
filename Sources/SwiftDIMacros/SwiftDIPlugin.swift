@@ -11,9 +11,9 @@ import SwiftSyntaxMacros
 @main
 struct SwiftDIPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
-        EnableConfigurationMacros.self,
         ComponentMacros.self,
         ConfigContextMacros.self,
+        EnableConfigurationMacros.self,
         ContractMacros.self,
     ]
 }

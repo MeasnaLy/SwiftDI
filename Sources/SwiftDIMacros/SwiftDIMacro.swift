@@ -8,98 +8,6 @@ import Foundation
 private var allClassWithComponets:Set<String> = []
 private var allProtocolWithContracts:Set<String> = []
 
-public struct EnableConfigurationMacros: MemberMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
-                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
-                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        
-        guard let classDecl = declaration.toClassDecl else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeClass)
-            )
-            return []
-        }
-        
-        if classDecl.inheritanceClauses.first(where: { $0 == "UIApplicationDelegate" }) == nil {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeConformToUIApplicationDelegate)
-            )
-            return []
-        }
-        
-        guard let applicationDidFinishLaunchingWithOptions = classDecl.diFunctions.first(where: { $0 == DIFunction.applicationDidFinishLaunchingWithOptions }) else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.missingImplementation)
-            )
-            return []
-        }
-        
-        let isMacroConfigContextExist = applicationDidFinishLaunchingWithOptions.statemets.first(where: { $0.contains("#ConfigContext") }) != nil
-        
-        if !isMacroConfigContextExist {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustHaveMaroConfigContext)
-            )
-            return []
-        }
-        
-        if let className = declaration.name {
-            allClassWithComponets.insert(("\(className).self"))
-        }
-    
-        return []
-    }
-}
-
-public struct ConfigContextMacros : ExpressionMacro {
-    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
-        
-        let codeExpr: ExprSyntax = "ApplicationContext.shared.startContext(classes: [\(raw: allClassWithComponets.joined(separator: ","))], protocols: [\(raw: allProtocolWithContracts.joined(separator: ","))])"
-        
-        return codeExpr.trimmed
-        
-    }
-}
-
-public struct ContractMacros: MemberMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        
-        guard let protocolDecl = declaration.toProtocolDecl else {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeProtocol)
-            )
-            return []
-        }
-        
-        if protocolDecl.attributeStrings.first(where: {$0 == "objc"}) == nil {
-            context.diagnose(
-                Diagnostic(
-                    node: Syntax(node),
-                    message: SwiftDIDiagnostic.mustBeProtocol)
-            )
-            return []
-        }
-        
-        if let protocolName = declaration.name {
-            allProtocolWithContracts.insert(("\(protocolName).self"))
-        }
-        
-        return []
-    }
-    
-    
-}
-
 public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
@@ -200,6 +108,92 @@ extension ComponentMacros: ExtensionMacro {
         """
         
         return [syntax.cast(ExtensionDeclSyntax.self)]
+    }
+}
+
+public struct ContractMacros: MemberMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        
+        guard let protocolDecl = declaration.toProtocolDecl else {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeProtocol)
+            )
+            return []
+        }
+        
+        if protocolDecl.attributeStrings.first(where: {$0 == "objc"}) == nil {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeProtocol)
+            )
+            return []
+        }
+        
+        if let protocolName = declaration.name {
+            allProtocolWithContracts.insert(("\(protocolName).self"))
+        }
+        
+        return []
+    }
+}
+
+public struct EnableConfigurationMacros: MemberMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax,
+                                 providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
+                                 in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        
+        guard let classDecl = declaration.toClassDecl else {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeClass)
+            )
+            return []
+        }
+        
+        if classDecl.inheritanceClauses.first(where: { $0 == "UIApplicationDelegate" }) == nil {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustBeConformToUIApplicationDelegate)
+            )
+            return []
+        }
+        
+        guard let applicationDidFinishLaunchingWithOptions = classDecl.diFunctions.first(where: { $0 == DIFunction.applicationDidFinishLaunchingWithOptions }) else {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.missingImplementation)
+            )
+            return []
+        }
+        
+        let isMacroConfigContextExist = applicationDidFinishLaunchingWithOptions.statemets.first(where: { $0.contains("#ConfigContext") }) != nil
+        
+        if !isMacroConfigContextExist {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(node),
+                    message: SwiftDIDiagnostic.mustHaveMaroConfigContext)
+            )
+            return []
+        }
+    
+        return []
+    }
+}
+
+public struct ConfigContextMacros : ExpressionMacro {
+    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
+        
+        let codeExpr: ExprSyntax = "ApplicationContext.shared.startContext(classes: [\(raw: allClassWithComponets.joined(separator: ","))], protocols: [\(raw: allProtocolWithContracts.joined(separator: ","))])"
+        
+        return codeExpr.trimmed
+        
     }
 }
 

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftDIMacros
 
 public class ApplicationContext {
     public static let shared = ApplicationContext()

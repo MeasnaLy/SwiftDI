@@ -24,6 +24,7 @@ public class AppContext {
         
         for item in classes {
             let className = String(describing: item)
+//            print("className: \(className)")
             let classInstance = item.createInstace()
             
             mapKeyInstance[className] = classInstance
@@ -33,7 +34,9 @@ public class AppContext {
     
     private func createProtocols(protocols: [Protocol]) {
         for item in protocols {
-            let protocolName = String(describing: item)
+            let protocolName = String(NSStringFromProtocol(item).split(separator: ".").last ?? "")
+            //String(describing: item)
+//            print("protocolName: \(protocolName)")
             mapKeyProtocol[protocolName] = item
         }
     }
@@ -58,6 +61,9 @@ public class AppContext {
     
     // only for package use
     func getInstance(classNameOrProtocol: String) -> Any? {
+        
+//        print("classNameOrProtocol: \(classNameOrProtocol)")
+        
         if let instance = self.mapKeyInstance[classNameOrProtocol] {
             return instance
         }
