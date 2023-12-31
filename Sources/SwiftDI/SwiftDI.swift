@@ -10,6 +10,7 @@ public macro Component() = #externalMacro(module: "SwiftDIMacros", type: "Compon
 @attached(member)
 public macro Contract() = #externalMacro(module: "SwiftDIMacros", type: "ContractMacros")
 
+@attached(extension, conformances: ConfigureDI, names: arbitrary)
 @attached(member)
 public macro EnableConfiguration() = #externalMacro(module: "SwiftDIMacros", type: "EnableConfigurationMacros")
 

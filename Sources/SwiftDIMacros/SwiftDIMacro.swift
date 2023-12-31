@@ -187,6 +187,19 @@ public struct EnableConfigurationMacros: MemberMacro {
     }
 }
 
+extension EnableConfigurationMacros: ExtensionMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
+        
+        let syntax: DeclSyntax = """
+        extension \(raw: declaration.name!): ConfigureDI {
+
+        }
+        """
+        
+        return [syntax.cast(ExtensionDeclSyntax.self)]
+    }
+}
+
 public struct ConfigContextMacros : ExpressionMacro {
     public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
         
