@@ -5,9 +5,6 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 import Foundation
 
-private var allClassWithComponets:Set<String> = []
-private var allProtocolWithContracts:Set<String> = []
-
 public struct ComponentMacros: MemberMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax,
                                  providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
@@ -41,10 +38,6 @@ public struct ComponentMacros: MemberMacro {
                     ExprSyntax("self.\(raw: name) = \(raw: name)")
                 }
             }
-        }
-        
-        if let className = declaration.name {
-            allClassWithComponets.insert(("\(className).self"))
         }
         
         return [DeclSyntax(initializer)]
@@ -132,10 +125,6 @@ public struct ContractMacros: MemberMacro {
             return []
         }
         
-        if let protocolName = declaration.name {
-            allProtocolWithContracts.insert(("\(protocolName).self"))
-        }
-        
         return []
     }
 }
@@ -203,7 +192,7 @@ extension EnableConfigurationMacros: ExtensionMacro {
 public struct ConfigContextMacros : ExpressionMacro {
     public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
         
-        let codeExpr: ExprSyntax = "ApplicationContext.shared.startContext(classes: [\(raw: allClassWithComponets.joined(separator: ","))], protocols: [\(raw: allProtocolWithContracts.joined(separator: ","))])"
+        let codeExpr: ExprSyntax = "ApplicationContext.shared.startContext(classes: classes, protocols: protocols)"
         
         return codeExpr.trimmed
         
