@@ -43,7 +43,7 @@ I want to make SwiftDI work like Spring Dependency Injection that uses annotatio
 <h2>Installation</h2>
 
 ```
-https://github.com/MeasnaLazi/SwiftD
+.package(url: "https://github.com/MeasnaLazi/SwiftDI", branch: "master")
 ```
 <h2>Example</h2>
 
