@@ -20,28 +20,35 @@ I want to make SwiftDI work like Spring Dependency Injection that uses annotatio
 
 <h2>How to use:</h2>
 <ul>
-    <li>@Contract uses only with @objc protocol </li>
-    <li>@Component uses only with class</li>
+    <li>`@Contract` uses only with @objc protocol </li>
+    <li>`@Component` uses only with class</li>
     <li>
-        @Inject uses only with property. The property must be optional and non static/class. @Inject has 2 optional arguments:
-        <ol>
+        `@Inject` uses only with property. The property must be optional and non-static/class. `@Inject` has 2 optional arguments:
+        <ul>
             <li>
-            type: InjectType.context for getting an existing instance in context (default). InjectType.new for getting a new instance. 
+            <b>type</b>: InjectType.context for getting an existing instance in context (default). InjectType.new for getting a new instance. 
             </li>
             <li>
-            qualifier: Specify which type of instance you want. If you don't specify, the first one from the context will be used.  
+            <b>qualifier</b>: Specify which type of instance you want. If you don't specify, the first one from the context will be used.  
             </li>
-        </ol>
+        </ul>
     </li>
     <li>
-    @EnableConfiguration
-    \#ConfigContext
+    `@EnableConfiguration` uses only with the class that conforms to protocol `UIApplicationDelegate` which is normally called the `AppDelegate` class.
+    </li>
+    <li>
+    `#ConfigContext` uses only in the override method of `UIApplicationDelegate` which is `func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: ...`
     </li>
 </ul>
-<h3>Example</h3>
+<h2>Installation</h2>
 
+```
+https://github.com/MeasnaLazi/SwiftD
+```
+<h2>Example</h2>
 
-<p>ViewController</p>
+<h3>ViewController</h3>
+
 ```
 import SwiftDI
 
@@ -77,7 +84,8 @@ class ViewController: UIViewController {
 }
 ```
 
-<p>Repository</p>
+<h3>Repository</h3>
+
 ```
 import SwiftDI
 
@@ -103,7 +111,8 @@ class UserRepositoryMock: UserRepository {
 }
 ```
 
-<p>Service</p>
+<h3>Service</h3>
+
 ```
 import SwiftDI
 
@@ -138,6 +147,7 @@ class UserServiceMock: UserService {
 ```
 
 <h3>Configuration</h3>
+
 ```
 @EnableConfiguration
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -165,4 +175,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 ```
-<p>I want to make it more simple by just `@EnableConfiguration` and `#ConfigContext` without `var classes and protocols` but sadly I can not control the priority execution of macros. So I only let you configure manually like the above instruction. </p>
+<p>I want to make it simple by just `@EnableConfiguration` and `#ConfigContext` without `var classes and protocols` but sadly I can not control the priority execution of macros. So I only let you configure manually like the above instruction. let's see the next update of Swift Macros, I will keep trying to change it to auto-configure. </p>
