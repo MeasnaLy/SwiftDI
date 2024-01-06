@@ -32,9 +32,13 @@ final class SwiftDITests: XCTestCase {
             
             class Application : UIApplicationDelegate {
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-                    let context =         ApplicationContext.shared.startContext(classes: [])
+                    let context =         ApplicationContext.shared.startContext(classes: classes, protocols: protocols)
                     return true
                 }
+            }
+            
+            extension Application: ConfigureDI {
+
             }
             """,
             macros: testMacros)
@@ -43,7 +47,6 @@ final class SwiftDITests: XCTestCase {
     func testMacroCofigContext() {
         assertMacroExpansion(
             """
-            @EnableConfiguration
             class Application : UIApplicationDelegate {
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
                     let context = #ConfigContext
@@ -55,7 +58,7 @@ final class SwiftDITests: XCTestCase {
             
             class Application : UIApplicationDelegate {
                 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-                    let context =         ApplicationContext.shared.startContext(classes: [])
+                    let context =         ApplicationContext.shared.startContext(classes: classes, protocols: protocols)
                     return true
                 }
             }
