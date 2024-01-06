@@ -8,71 +8,161 @@ I want to make SwiftDI work like Spring Dependency Injection that uses annotatio
 
 <h2>Todo</h2>
 <ul>
-  <li>Create Context ✅</li>
-  <li>Create Annotation @Component for class ✅</li>
-  <li>Create Annotation @InjectClass for variable ✅</li>
-  <li>Create Argument for @InjectClass(.new or .context)</li>
-  <li>Create Annotation @Qualifier for variable</li>
-  <li>Consider working with struct</li>
-  <li>Create a Life Cycle Event</li>
-  <li>Create a Profile (eg: Mock vs Original)</li>
-  <li>more...etc</li>
+    <li>Create Context ✅</li>
+    <li>Create Annotation @Component for class ✅</li>
+    <li>Create Annotation @Inject for properties ✅</li>
+    <li>Create Argument for @Inject(.new or .context) with qualifier✅</li>
+    <li>Consider working with struct</li>
+    <li>Create a Life Cycle Event</li>
+    <li>Create a Profile (eg: Mock vs Original)</li>
+    <li>more...etc</li>
 </ul>
 
-<h2>Code</h2>
+<h2>How to use:</h2>
+<ul>
+    <li>@Contract uses only with @objc protocol </li>
+    <li>@Component uses only with class</li>
+    <li>
+        @Inject uses only with property. The property must be optional and non static/class. @Inject has 2 optional arguments:
+        <ol>
+            <li>
+            type: InjectType.context for getting an existing instance in context (default). InjectType.new for getting a new instance. 
+            </li>
+            <li>
+            qualifier: Specify which type of instance you want. If you don't specify, the first one from the context will be used.  
+            </li>
+        </ol>
+    </li>
+    <li>
+    @EnableConfiguration
+    \#ConfigContext
+    </li>
+</ul>
+<h3>Example</h3>
 
+
+<p>ViewController</p>
 ```
-@Component
-class Sample {
-    private var age: Int = 0
-    let id: Int
-    private var name: String
-    var gender: String = "male"
-    var node: String?
-}
+import SwiftDI
 
-@Component
-class User {
-    private var id: Int
-}
-
-class Main {
-    @InjectClass
-    var sample: Sample?
+class ViewController: UIViewController {
     
-    @InjectClass
-    var sample2: Sample?
+    @Inject(.context, qualifier: Const().isTesting ? UserServiceMock.self : UserServiceImpl.self)
+    var userService: UserService?
     
-    @InjectClass
-    var user: User?
-}
-
-let classes:[InitializerDI.Type] = [Sample.self, User.self]
-let context = Application.shared.startNewContext(classes: classes)
-
-let main = Main()
-
-if let user = main.user {
-    let userRefId = Unmanaged.passUnretained(user).toOpaque()
-    print("user refId: \(userRefId)")
-}
-
-if let userFromContext:User = context.getInstance(key: "User") {
-    let userRefIdFromContextId = Unmanaged.passUnretained(userFromContext).toOpaque()
-    print("user from context refId: \(userRefIdFromContextId)")
-}
-
-if let sample = main.sample, let sample2 = main.sample2 {
-    let sampleRefId = Unmanaged.passUnretained(sample).toOpaque()
-    print("sample refId: \(sampleRefId)")
+    @Inject(.context, qualifier: UserServiceImpl.self)
+    var userServiceContext: UserService?
     
-    let sample2RefId = Unmanaged.passUnretained(sample2).toOpaque()
-    print("sample2 refId: \(sample2RefId)")
-}
+    @Inject(.new)
+    var userServiceNew: UserService?
 
-if let sampleFromContext:Sample = context.getInstance(key: "Sample") {
-    let sampleFromContextId = Unmanaged.passUnretained(sampleFromContext).toOpaque()
-    print("sample from context refId: \(sampleFromContextId)")
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        if let userService = self.userService {
+            print("==userService==")
+            userService.showCurrentUser()
+        }
+        
+        if let userServiceContext = self.userServiceContext {
+            print("==userServiceContext==")
+            userServiceContext.showCurrentUser()
+        }
+        
+        if let userServiceNew = self.userServiceNew {
+            print("==userServiceNew==")
+            userServiceNew.showCurrentUser()
+        }
+    }
 }
 ```
 
+<p>Repository</p>
+```
+import SwiftDI
+
+@Contract
+@objc protocol UserRepository {
+    func getCurrentUser()
+}
+
+@Component
+class UserRepositoryImpl: UserRepository {
+    
+    func getCurrentUser() {
+        print("UserRepositoryImpl getCurrentUser called!")
+    }
+}
+
+@Component
+class UserRepositoryMock: UserRepository {
+    
+    func getCurrentUser() {
+        print("UserRepositoryMock getCurrentUser called!")
+    }
+}
+```
+
+<p>Service</p>
+```
+import SwiftDI
+
+@Contract
+@objc protocol UserService {
+    func showCurrentUser()
+}
+
+@Component
+class UserServiceImpl: UserService {
+    
+    @Inject(.context, qualifier: UserRepositoryImpl.self)
+    private var userRepository: UserRepository?
+    
+    func showCurrentUser() {
+        print("UserServiceImpl called")
+        userRepository?.getCurrentUser()
+    }
+}
+
+@Component
+class UserServiceMock: UserService {
+    
+    @Inject(.context, qualifier: UserRepositoryMock.self)
+    private var userRepository: UserRepository?
+    
+    func showCurrentUser() {
+        print("UserServiceMock called")
+        userRepository?.getCurrentUser()
+    }
+}
+```
+
+<h3>Configuration</h3>
+```
+@EnableConfiguration
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    var classes: [InitializerDI.Type] {
+        [
+            UserRepositoryMock.self,
+            UserRepositoryImpl.self,
+            UserServiceImpl.self,
+            UserServiceMock.self,
+        ]
+    }
+    
+    var protocols: [Protocol] {
+        [
+            UserService.self,
+            UserRepository.self,
+        ]
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let _ = #ConfigContext
+        ...
+        return true
+    }
+
+}
+```
+<p>I want to make it more simple by just `@EnableConfiguration` and `#ConfigContext` without `var classes and protocols` but sadly I can not control the priority execution of macros. So I only let you configure manually like the above instruction. </p>
