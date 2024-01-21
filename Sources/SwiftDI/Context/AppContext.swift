@@ -15,6 +15,30 @@ public class AppContext {
     
     private var classes: [InitializerDI.Type] = []
     
+    convenience init(bundle:Bundle) {
+        var classes:[InitializerDI.Type] = []
+        var protocols:[Protocol] = []
+        
+        if let path = bundle.path(forResource: "Config", ofType: "plist") {
+            if let configDict = NSDictionary(contentsOfFile: path) {
+                let classesStr:[String] = (configDict["Classes"] ?? []) as! [String]
+                let protocolsStr:[String] = (configDict["Protocols"] ?? []) as!  [String]
+                
+                for classStr in classesStr {
+//                    let instance = createNewInstance(classStr)
+//                    print("instance: \(instance)")
+                }
+                
+                print("\(classesStr)")
+                print("\(protocolsStr)")
+            }
+        } else {
+            
+        }
+        
+        self.init(classes: classes, protocols: protocols)
+    }
+    
     init(classes: [InitializerDI.Type], protocols: [Protocol] = []) {
         self.createClass(classes: classes)
         self.createProtocols(protocols: protocols)
@@ -24,7 +48,6 @@ public class AppContext {
         
         for item in classes {
             let className = String(describing: item)
-//            print("className: \(className)")
             let classInstance = item.createInstace()
             
             mapKeyInstance[className] = classInstance
@@ -35,8 +58,6 @@ public class AppContext {
     private func createProtocols(protocols: [Protocol]) {
         for item in protocols {
             let protocolName = String(NSStringFromProtocol(item).split(separator: ".").last ?? "")
-            //String(describing: item)
-//            print("protocolName: \(protocolName)")
             mapKeyProtocol[protocolName] = item
         }
     }

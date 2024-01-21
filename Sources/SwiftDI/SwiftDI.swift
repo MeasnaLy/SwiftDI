@@ -16,3 +16,6 @@ public macro EnableConfiguration() = #externalMacro(module: "SwiftDIMacros", typ
 
 @freestanding(expression)
 public macro ConfigContext() -> AppContext = #externalMacro(module: "SwiftDIMacros", type: "ConfigContextMacros")
+
+@freestanding(expression)
+public macro ConfigContextFile() -> AppContext = #externalMacro(module: "SwiftDIMacros", type: "ConfigContextFileMacros")

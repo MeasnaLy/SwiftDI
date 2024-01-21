@@ -21,6 +21,14 @@ public class ApplicationContext {
         return appContext!
     }
     
+    public func startContext(_ bundle: Bundle) -> AppContext {
+        if let appContext {
+            return appContext
+        }
+        appContext = AppContext(bundle: bundle)
+        return appContext!
+    }
+    
     public func getContext() -> AppContext? {
         return self.appContext
     }

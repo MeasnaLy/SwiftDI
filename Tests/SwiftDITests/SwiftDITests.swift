@@ -10,6 +10,7 @@ let testMacros: [String: Macro.Type] = [
     "EnableConfiguration" : EnableConfigurationMacros.self,
     "Component" : ComponentMacros.self,
     "ConfigContext": ConfigContextMacros.self,
+    "ConfigContextFile": ConfigContextFileMacros.self,
     "Contract": ContractMacros.self,
     
 ]
@@ -44,6 +45,33 @@ final class SwiftDITests: XCTestCase {
             macros: testMacros)
     }
     
+    func testMacroEnableConfigurationWithFile() {
+        assertMacroExpansion(
+            """
+            @EnableConfiguration
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context = #ConfigContextFile
+                    return true
+                }
+            }
+            """,
+            expandedSource:"""
+            
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context =         ApplicationContext.shared.startContext(Bundle.main)
+                    return true
+                }
+            }
+            
+            extension Application: ConfigureDI {
+
+            }
+            """,
+            macros: testMacros)
+    }
+    
     func testMacroCofigContext() {
         assertMacroExpansion(
             """
@@ -65,6 +93,29 @@ final class SwiftDITests: XCTestCase {
             """,
             macros: testMacros)
     }
+
+    func testMacroCofigContextFile() {
+        assertMacroExpansion(
+            """
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context = #ConfigContextFile
+                    return true
+                }
+            }
+            """,
+            expandedSource:"""
+            
+            class Application : UIApplicationDelegate {
+                func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                    let context =         ApplicationContext.shared.startContext()
+                    return true
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+    
     
     func testMacroContract() {
         assertMacroExpansion(
