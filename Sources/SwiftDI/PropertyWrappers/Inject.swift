@@ -47,7 +47,7 @@ public enum InjectType {
 }
 
 @propertyWrapper public struct Inject<Value> {
-    public var wrappedValue: Value? {
+    public var wrappedValue: Value {
         get {
             var className = String(describing: Value.self)
             
@@ -56,17 +56,17 @@ public enum InjectType {
             }
             
             guard let context = ApplicationContext.shared.getContext() else {
-                return nil
+                return InitializerDIImp.init() as! Value
             }
        
             switch type {
             case .context:
                 guard let instance = context.getInstance(classNameOrProtocol: className) else {
-                    return nil
+                    return InitializerDIImp.init() as! Value
                 }
-                return instance as? Value
+                return instance as! Value
             case .new:
-                return context.createNewInstance(className) as? Value
+                return context.createNewInstance(className) as! Value
             }
         }
     }
@@ -76,6 +76,16 @@ public enum InjectType {
     public init(_ type: InjectType = .context, qualifier: InitializerDI.Type? = nil) {
         self.type = type
         self.qualifier = qualifier
+    }
+}
+
+struct InitializerDIImp : InitializerDI {
+    static func createInstace() -> InitializerDI {
+        return self.init()
+    }
+    
+    func getInstance<T>(_ type: T.Type) -> T? where T : InitializerDI {
+        return self as? T
     }
 }
 
